@@ -12,7 +12,7 @@ namespace TicTacToe
         public static Random rng = new Random();
 
         //Pros: Can win.
-        //Cons: Only tries to win, doesn't try to not lose.
+        //Cons: Only tries to win, doesn't try to not lose. Would rather attempt a risky win than draw.
         public static int BreadthFirst(char[] board)
         {
             char player = 'O';

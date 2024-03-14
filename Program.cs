@@ -18,6 +18,7 @@ namespace TicTacToe
 
         static void Main(string[] args)
         {
+            Console.WriteLine($"Breadth First Search: {Tester.testAlgorithm(Algorithms.BreadthFirst, Tester.Difficulty.EMPTY)}ms");
             const int screenWidth = 1600;
             const int screenHeight = 900;
 

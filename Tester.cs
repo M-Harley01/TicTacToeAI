@@ -63,7 +63,6 @@ namespace TicTacToe
         public static long testAlgorithm(Func<char[], int> algorithm, Difficulty difficulty)
         {
             char[] board = randomBoard(getHowManyToFill(difficulty));
-            General.mainBoard = (char[])board.Clone();
             Stopwatch stopwatch = Stopwatch.StartNew();
             algorithm.Invoke(board);
             stopwatch.Stop();
