@@ -13,13 +13,13 @@ namespace TicTacToe
 
         //Pros: Can win.
         //Cons: Only tries to win, doesn't try to not lose. Would rather attempt a risky win than draw.
-        public static int BreadthFirst(char[] board)
+        public static int BreadthFirst(char[] board, char player)
         {
-            char player = 'O';
-            Queue<Node> frontier = new Queue<Node>();
+            char startPlayer = player;
+            HashQueue<Node> frontier = new HashQueue<Node>();
             HashSet<Node> visited = new HashSet<Node>();
         
-            frontier.Enqueue(new Node(null, board, -1, 'X'));
+            frontier.Enqueue(new Node(null, board, -1, (startPlayer == 'X')? 'O' : 'X' ));
             while (frontier.Count > 0)
             {
                 Node currentNode = frontier.Dequeue();
@@ -33,15 +33,15 @@ namespace TicTacToe
         
                     if (!visited.Contains(childNode) && !frontier.Contains(childNode))
                     {
-                        if (getWinner(childBoard) == 'O')
+                        if (getWinner(childBoard) == startPlayer)
                         {
                             for(int x = 0; x < Settings.boardSizeLength; x++)
                             {
                                 for(int y = 0; y < Settings.boardSizeLength; y++)
                                 {
-                                    Console.Write(childBoard[flatten(x, y)]);
+                                    //Console.Write(childBoard[flatten(x, y)]);
                                 }
-                                Console.WriteLine();
+                                //Console.WriteLine();
                             }
                             return getFirstMove(childNode);
                         }
@@ -59,22 +59,43 @@ namespace TicTacToe
             }
             //If unable to win, it will play a random move.
             Console.WriteLine("Random Move!");
-            return randomMove(board);
+            return randomMove(board, player);
+        }
+
+        public static int DepthFirstSearch(char[] board, char player)
+        {
+            throw new NotImplementedException();
+        }
+        public static int IterativeDeepeningDepthFirstSearch(char[] board, char player)
+        {
+            throw new NotImplementedException();
+        }
+        public static int GraphSearch(char[] board, char player)
+        {
+            throw new NotImplementedException();
+        }
+        public static int AStarSearch(char[] board, char player)
+        {
+            throw new NotImplementedException();
+        }
+        public static int BidirectionalSearch(char[] board, char player)
+        {
+            throw new NotImplementedException();
         }
 
         private static int getFirstMove(Node childNode)
         {
-            int count = 0;
             if (childNode.parent == null)
                 return -1;
             while(childNode.parent.parent != null) {
                 childNode = childNode.parent;
-                count++;
+                if (childNode.parent == null)
+                    return -1;
             }
             return childNode.action;
         }
 
-        public static int randomMove(char[] board)
+        public static int randomMove(char[] board, char player)
         {
             int pos = rng.Next(Settings.boardSizeSq);
             while (board[pos] != '\0')

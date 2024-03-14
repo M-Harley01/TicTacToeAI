@@ -11,7 +11,7 @@ namespace TicTacToe
     public static class General
     {
         public static char currentPlayer = 'X';
-        public static char[] mainBoard = { '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0' };
+        public static char[] mainBoard = new char[boardSizeSq];
         public static bool gameOver = false;
 
         public static int flatten(int x, int y)

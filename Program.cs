@@ -18,7 +18,14 @@ namespace TicTacToe
 
         static void Main(string[] args)
         {
-            Console.WriteLine($"Breadth First Search: {Tester.testAlgorithm(Algorithms.BreadthFirst, Tester.Difficulty.EMPTY)}ms");
+            long time = 0;
+            for(int i = 0; i < 500; i++)
+            {
+                time += Tester.testAlgorithm(Algorithms.BreadthFirst, Tester.Difficulty.EMPTY);
+            }
+            time /= 500;
+            Console.WriteLine($"Breadth First Search mean: {time}ms");
+
             const int screenWidth = 1600;
             const int screenHeight = 900;
 
@@ -27,37 +34,41 @@ namespace TicTacToe
             Raylib.SetTargetFPS(60);
             Color background = new Color(0, 128, 128, 255);
 
+            Tile[] tiles = new Tile[boardSizeSq];
+            for(int x = 0; x < boardSizeLength; x++) 
+            {
+                for(int y = 0; y < boardSizeLength; y++)
+                {
+                    tiles[flatten(x, y)] = new Tile(screenWidth / 2 + (y * 110), screenHeight / 2 + (x * 110), 100, 100, flatten(x,y));
+                }
+            }
+
             while (!Raylib.WindowShouldClose())
             {
                 Raylib.BeginDrawing();
 
                 Raylib.ClearBackground(background);
 
-                Vector2 mousePOS = Raylib.GetMousePosition();
-
-                for (int i = 0; i < 3; i++)
+                for(int i = 0; i < boardSizeSq; i++)
                 {
-                    for (int j = 0; j < 3; j++)
+                    tiles[i].Draw();
+                }
+
+                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                {
+                    Vector2 mousePosition = Raylib.GetMousePosition();
+                    for (int i = 0; i < boardSizeSq; i++)
                     {
-                        Raylib.IsMouseButtonPressed(MouseButton.Left);
-                        if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                        if(checkBounds(tiles[i].x, tiles[i].y, tiles[i].width, tiles[i].height, mousePosition))
                         {
-                            if (checkBounds(screenWidth / 2 + (i * 110), screenHeight / 2 + (j * 110), 100, 100, mousePOS) && mainBoard[flatten(j, i)] != 'X' && mainBoard[flatten(j, i)] != 'O' && !gameOver)
-                            {
-                                Console.WriteLine($"Clicked at i:{i}, j:{j}");
-                                mainBoard[flatten(j, i)] = currentPlayer;
-                                nextTurn();
-                                gameOver = checkGameOver(mainBoard);
-                            }
+                            tiles[i].onClick();
                         }
-                        Raylib.DrawRectangle(screenWidth / 2 + (i * 110), screenHeight / 2 + (j * 110), 100, 100, Color.White);
-                        Raylib.DrawText(mainBoard[flatten(j, i)].ToString(), screenWidth / 2 + (i * 110) + 25, screenHeight / 2 + (j * 110) + 15, 80, Color.Black);
                     }
                 }
 
-                if(!gameOver && currentPlayer == 'O')
+                if (!gameOver && currentPlayer == 'O')
                 {
-                    mainBoard[Algorithms.BreadthFirst(mainBoard)] = currentPlayer;
+                    mainBoard[Algorithms.BreadthFirst(mainBoard, 'O')] = currentPlayer;
                     nextTurn();
                     gameOver = checkGameOver(mainBoard);
                 }

@@ -8,12 +8,12 @@ namespace TicTacToe
 {
     public class Node
     {
-        public Node parent;
+        public Node? parent;
         public char[] board;
         public int action;
         public char lastPlayed;
 
-        public Node(Node parent, char[] board, int action, char lastPlayed) 
+        public Node(Node? parent, char[] board, int action, char lastPlayed) 
         {
             this.parent = parent;
             this.board = (char[])board.Clone();

@@ -26,13 +26,13 @@ namespace TicTacToe
                 case Difficulty.EMPTY:
                     return 0;
                 case Difficulty.HARD: 
-                    return 2;
+                    return (2 * Settings.boardSizeSq) / 9;
                 case Difficulty.MEDIUM:
-                    return 4;
+                    return (4 * Settings.boardSizeSq) / 9;
                 case Difficulty.EASY:
-                    return 6;
+                    return (6 * Settings.boardSizeSq) / 9;
                 case Difficulty.END:
-                    return 8;
+                    return (8 * Settings.boardSizeSq) / 9;
             }
 
             return 8;
@@ -60,11 +60,11 @@ namespace TicTacToe
             return board;
         }
 
-        public static long testAlgorithm(Func<char[], int> algorithm, Difficulty difficulty)
+        public static long testAlgorithm(Func<char[], char, int> algorithm, Difficulty difficulty)
         {
             char[] board = randomBoard(getHowManyToFill(difficulty));
             Stopwatch stopwatch = Stopwatch.StartNew();
-            algorithm.Invoke(board);
+            algorithm.Invoke(board, 'X');
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
         }
