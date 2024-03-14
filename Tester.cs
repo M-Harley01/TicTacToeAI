@@ -4,12 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static TicTacToe.Algorithms;
 
 namespace TicTacToe
 {
     public class Tester
     {
-        private static Random rng = new Random();
 
         public enum Difficulty
         {
@@ -38,52 +38,36 @@ namespace TicTacToe
             return 8;
         }
 
-        static char[,] randomBoard(int fill)
+        static char[] randomBoard(int fill)
         {
-            char[,] board = new char[3, 3];
+            char[] board = new char[Settings.boardSizeSq];
 
-            for(int x = 0; x < 3; x++)
+            for(int x = 0; x < Settings.boardSizeSq; x++)
             {
-                for (int y = 0; y < 3; y++)
-                {
-                    board[x, y] = ' ';
-                }
+                board[x] = '\0';
             }
 
             char currentTurn = 'X';
             for (int i = 0; i < fill; i++) {
-                int x = rng.Next(3);
-                int y = rng.Next(3);
-                while (board[x,y] != ' ')
+                int x = rng.Next(Settings.boardSizeSq);
+                while (board[x] != '\0')
                 {
-                    x = rng.Next(3);
-                    y = rng.Next(3);
+                    x = rng.Next(Settings.boardSizeSq);
                 }
-                board[x, y] = currentTurn;
+                board[x] = currentTurn;
                 currentTurn = currentTurn == 'X' ? 'O' : 'X';
             }
             return board;
         }
 
-        public static long testAlgorithm(Func<char[,], int> algorithm, Difficulty difficulty)
+        public static long testAlgorithm(Func<char[], int> algorithm, Difficulty difficulty)
         {
-            char[,] board = randomBoard(getHowManyToFill(difficulty));
+            char[] board = randomBoard(getHowManyToFill(difficulty));
+            General.mainBoard = (char[])board.Clone();
             Stopwatch stopwatch = Stopwatch.StartNew();
             algorithm.Invoke(board);
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
-        }
-
-        public static int randomAlgorithm(char[,] board)
-        {
-            int x = rng.Next(3);
-            int y = rng.Next(3);
-            while (board[x, y] != ' ')
-            {
-                x = rng.Next(3);
-                y = rng.Next(3);
-            }
-            return x + y * 3;
         }
 
     }

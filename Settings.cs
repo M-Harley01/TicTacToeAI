@@ -9,5 +9,6 @@ namespace TicTacToe
     public static class Settings
     {
         public static int boardSizeLength = 3;
+        public static int boardSizeSq = boardSizeLength * boardSizeLength;
     }
 }
