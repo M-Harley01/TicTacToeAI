@@ -99,9 +99,59 @@ namespace TicTacToe
             }
         }
 
-        static void breadthFirst()
+        static void BreadthFirst()
         {
+            Queue<char[,]> frontier = new Queue<char[,]>();
+            HashSet<char[,]> visited = new HashSet<char[,]>();
 
+            frontier.Enqueue(board.Clone() as char[,]);
+
+            while (frontier.Count > 0)
+            {
+                char[,] currentNode = frontier.Dequeue();
+                visited.Add(currentNode);
+
+                foreach (Tuple<int, int> action in findEmpty(currentNode))
+                {
+                    char[,] childBoard = currentNode.Clone() as char[,];
+                    childBoard[action.Item1, action.Item2] = currentPlayer;
+
+                    if (!visited.Contains(childBoard) && !frontier.Contains(childBoard))
+                    {
+                        if (IsGameOver())
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            frontier.Enqueue(childBoard);
+                        }
+                    }
+                }
+            }
+        }
+
+        static bool IsGameOver()
+        {
+            return false;
+        }
+
+        static List<Tuple<int,int>> findEmpty(char[,] board)
+        {
+            List<Tuple<int, int>> tupleArray = new List<Tuple<int, int>>();
+
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 3; j++)
+                {
+                    if (board[j, i] == ' ')
+                    {
+                        tupleArray.Add(new Tuple<int, int>(j,i));
+                    }
+                }
+            }
+
+            return tupleArray;
         }
 
 
