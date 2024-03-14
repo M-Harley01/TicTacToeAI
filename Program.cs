@@ -1,14 +1,24 @@
 ﻿using Raylib_cs;
-using System;
 using System.Numerics;
+using static TicTacToe.Settings;
 
 namespace TicTacToe
 {
     internal class Program
     {
         static char currentPlayer = 'X';
-        static char[,] board = { { ' ', ' ', ' ' }, { ' ', ' ', ' ' }, { ' ', ' ', ' ' } };
+        static char[] board = {  '\0', '\0', '\0',  '\0', '\0', '\0' ,  '\0', '\0', '\0' };
         static bool gameOver = false;
+
+        static int flatten(int x, int y)
+        {
+            return x + y * boardSizeLength;
+        }
+
+        static Tuple<int, int> deFlatten(int f)
+        {
+            return new Tuple<int, int>(f%boardSizeLength, f/boardSizeLength);
+        }
 
         static bool checkBounds(int x, int y, int width, int height, Vector2 mouse)
         {
@@ -21,137 +31,120 @@ namespace TicTacToe
 
         static void nextTurn()
         {
-            if (currentPlayer == 'X')
-            {
-                currentPlayer = 'O';
-            }
-            else
-            {
-                currentPlayer = 'X';
-            }
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
         }
 
         static void resetBoard()
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < boardSizeLength*boardSizeLength; i++)
             {
-                for (int j = 0; j < 3; j++)
-                {
-                    board[i, j] = ' ';
-                }
+                board[i] = '\0';
             }
         }
 
-        static void checkWinner()
+        static bool checkGameOver()
         {
-            for (int i = 0; i < 3; i++)
+            if (getWinner() != '\0')
+                return true;
+            for (int i = 0;i < boardSizeLength * boardSizeLength;i++)
             {
-                if (board[i, 0] != ' ' && board[i, 0] == board[i, 1] && board[i, 0] == board[i, 2])
+                if (board[i] == '\0')
+                    return false;
+            }
+            return true;
+        }
+
+        //TODO: OPTIMISE THIS PLEASE
+        static char getWinner()
+        {
+            char checking = 'X';
+            for(int i = 0; i < 2; i++)
+            {
+
+                int foundDiagonal1 = 0;
+                int foundDiagonal2 = 0;
+
+                for (int x = 0; x < boardSizeLength; x++)
                 {
-                    Console.WriteLine($"Player {board[i, 0]} wins!");
-                    gameOver = true;
-                    return;
-                }
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                if (board[0, i] != ' ' && board[0, i] == board[1, i] && board[0, i] == board[2, i])
-                {
-                    Console.WriteLine($"Player {board[0, i]} wins!");
-                    gameOver = true;
-                    return;
-                }
-            }
-
-            if (board[0, 0] != ' ' && board[0, 0] == board[1, 1] && board[0, 0] == board[2, 2])
-            {
-                Console.WriteLine($"Player {board[0, 0]} wins!");
-                gameOver = true;
-                return;
-            }
-
-            if (board[0, 2] != ' ' && board[0, 2] == board[1, 1] && board[0, 2] == board[2, 0])
-            {
-                Console.WriteLine($"Player {board[0, 2]} wins!");
-                gameOver = true;
-                return;
-            }
-
-            bool isTie = true;
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    if (board[i, j] == ' ')
+                    int foundDown = 0;
+                    int foundAcross = 0;
+                    for(int y = 0; y < boardSizeLength; y++)
                     {
-                        isTie = false;
-                        break;
+                        if (board[flatten(x, y)] == checking)
+                            foundDown++;
+                        if (board[flatten(y, x)] == checking)
+                            foundAcross++;
                     }
-                }
-            }
-
-            if (isTie)
-            {
-                Console.WriteLine("It's a tie!");
-                gameOver = true;
-                return;
-            }
-        }
-
-        static void BreadthFirst()
-        {
-            Queue<char[,]> frontier = new Queue<char[,]>();
-            HashSet<char[,]> visited = new HashSet<char[,]>();
-
-            frontier.Enqueue(board.Clone() as char[,]);
-
-            while (frontier.Count > 0)
-            {
-                char[,] currentNode = frontier.Dequeue();
-                visited.Add(currentNode);
-
-                foreach (Tuple<int, int> action in findEmpty(currentNode))
-                {
-                    char[,] childBoard = currentNode.Clone() as char[,];
-                    childBoard[action.Item1, action.Item2] = currentPlayer;
-
-                    if (!visited.Contains(childBoard) && !frontier.Contains(childBoard))
+                    if (foundDown == boardSizeLength)
                     {
-                        if (IsGameOver())
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            frontier.Enqueue(childBoard);
-                        }
+                        return checking;
                     }
-                }
-            }
-        }
-
-        static bool IsGameOver()
-        {
-            return false;
-        }
-
-        static List<Tuple<int,int>> findEmpty(char[,] board)
-        {
-            List<Tuple<int, int>> tupleArray = new List<Tuple<int, int>>();
-
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    if (board[j, i] == ' ')
+                    if (foundAcross == boardSizeLength)
                     {
-                        tupleArray.Add(new Tuple<int, int>(j,i));
+                        return checking;
                     }
-                }
-            }
 
-            return tupleArray;
+                    if (board[flatten(x, x)] == checking)
+                        foundDiagonal1++;
+                    if (board[flatten((boardSizeLength-1) - x, x)] == checking)
+                        foundDiagonal2++;
+                }
+                if (foundDiagonal1 == boardSizeLength)
+                {
+                    return checking;
+                }
+                if (foundDiagonal2 == boardSizeLength)
+                {
+                    return checking;
+                }
+
+                checking = 'O';
+            }
+            return '\0';
+        }
+
+        //static void BreadthFirst()
+        //{
+        //    Queue<char[,]> frontier = new Queue<char[,]>();
+        //    HashSet<char[,]> visited = new HashSet<char[,]>();
+        //
+        //    frontier.Enqueue(board.Clone() as char[,]);
+        //
+        //    while (frontier.Count > 0)
+        //    {
+        //        char[,] currentNode = frontier.Dequeue();
+        //        visited.Add(currentNode);
+        //
+        //        foreach (Tuple<int, int> action in findEmpty(currentNode))
+        //        {
+        //            char[,] childBoard = currentNode.Clone() as char[,];
+        //            childBoard[action.Item1, action.Item2] = currentPlayer;
+        //
+        //            if (!visited.Contains(childBoard) && !frontier.Contains(childBoard))
+        //            {
+        //                if (IsGameOver())
+        //                {
+        //                    return;
+        //                }
+        //                else
+        //                {
+        //                    frontier.Enqueue(childBoard);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+
+        static List<int> findActions(char[] board)
+        {
+            List<int> actions = new List<int> ();
+            for(int i = 0; i < boardSizeLength*boardSizeLength; i++)
+            {
+                if (board[boardSizeLength] == '\0')
+                    actions.Add(i);
+            }
+            return actions;
         }
 
 
@@ -180,16 +173,16 @@ namespace TicTacToe
                         Raylib.IsMouseButtonPressed(MouseButton.Left);
                         if (Raylib.IsMouseButtonPressed(MouseButton.Left))
                         {
-                            if (checkBounds(screenWidth / 2 + (i * 110), screenHeight / 2 + (j * 110), 100, 100, mousePOS) && board[j, i] != 'X' && board[j, i] != 'O' && !gameOver)
+                            if (checkBounds(screenWidth / 2 + (i * 110), screenHeight / 2 + (j * 110), 100, 100, mousePOS) && board[flatten(j, i)] != 'X' && board[flatten(j, i)] != 'O' && !gameOver)
                             {
                                 Console.WriteLine($"Clicked at i:{i}, j:{j}");
-                                board[j, i] = currentPlayer;
+                                board[flatten(j, i)] = currentPlayer;
                                 nextTurn();
-                                checkWinner();
+                                gameOver = checkGameOver();
                             }
                         }
                         Raylib.DrawRectangle(screenWidth / 2 + (i * 110), screenHeight / 2 + (j * 110), 100, 100, Color.White);
-                        Raylib.DrawText(board[j, i].ToString(), screenWidth / 2 + (i * 110) + 25, screenHeight / 2 + (j * 110) + 15, 80, Color.Black);
+                        Raylib.DrawText(board[flatten(j, i)].ToString(), screenWidth / 2 + (i * 110) + 25, screenHeight / 2 + (j * 110) + 15, 80, Color.Black);
                     }
                 }
 
