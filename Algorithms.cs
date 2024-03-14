@@ -11,22 +11,25 @@ namespace TicTacToe
     {
         public static Random rng = new Random();
 
+        //Pros: Can win.
+        //Cons: Only tries to win, doesn't try to not lose.
         public static int BreadthFirst(char[] board)
         {
             char player = 'O';
             Queue<Node> frontier = new Queue<Node>();
             HashSet<Node> visited = new HashSet<Node>();
         
-            frontier.Enqueue(new Node(null, board, -1));
+            frontier.Enqueue(new Node(null, board, -1, 'X'));
             while (frontier.Count > 0)
             {
                 Node currentNode = frontier.Dequeue();
                 visited.Add(currentNode);
+                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
                 foreach (int action in findActions(currentNode.board))
                 {
                     char[] childBoard = (char[])currentNode.board.Clone();
                     childBoard[action] = player;
-                    Node childNode = new Node(currentNode, childBoard, action);
+                    Node childNode = new Node(currentNode, childBoard, action, player);
         
                     if (!visited.Contains(childNode) && !frontier.Contains(childNode))
                     {
@@ -52,9 +55,9 @@ namespace TicTacToe
                         }
                     }
                 }
-                player = player == 'O'? 'X' : 'O';
 
             }
+            //If unable to win, it will play a random move.
             Console.WriteLine("Random Move!");
             return randomMove(board);
         }

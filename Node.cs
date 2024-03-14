@@ -11,12 +11,14 @@ namespace TicTacToe
         public Node parent;
         public char[] board;
         public int action;
+        public char lastPlayed;
 
-        public Node(Node parent, char[] board, int action) 
+        public Node(Node parent, char[] board, int action, char lastPlayed) 
         {
             this.parent = parent;
             this.board = (char[])board.Clone();
             this.action = action;
+            this.lastPlayed = lastPlayed;
         }
 
         
