@@ -22,19 +22,29 @@ namespace TicTacToe
             {
                 Node currentNode = frontier.Dequeue();
                 visited.Add(currentNode);
-        
                 foreach (int action in findActions(currentNode.board))
                 {
                     char[] childBoard = (char[])currentNode.board.Clone();
                     childBoard[action] = player;
-                    player = player == 'X' ? 'O' : 'X';
                     Node childNode = new Node(currentNode, childBoard, action);
         
                     if (!visited.Contains(childNode) && !frontier.Contains(childNode))
                     {
                         if (getWinner(childBoard) == 'O')
                         {
+                            for(int x = 0; x < Settings.boardSizeLength; x++)
+                            {
+                                for(int y = 0; y < Settings.boardSizeLength; y++)
+                                {
+                                    Console.Write(childBoard[flatten(x, y)]);
+                                }
+                                Console.WriteLine();
+                            }
                             return getFirstMove(childNode);
+                        }
+                        else if(checkGameOver(childBoard))
+                        {
+                            continue;
                         }
                         else
                         {
@@ -42,6 +52,8 @@ namespace TicTacToe
                         }
                     }
                 }
+                player = player == 'O'? 'X' : 'O';
+
             }
             Console.WriteLine("Random Move!");
             return randomMove(board);
@@ -49,10 +61,12 @@ namespace TicTacToe
 
         private static int getFirstMove(Node childNode)
         {
+            int count = 0;
             if (childNode.parent == null)
                 return -1;
             while(childNode.parent.parent != null) {
                 childNode = childNode.parent;
+                count++;
             }
             return childNode.action;
         }
