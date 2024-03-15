@@ -14,6 +14,8 @@ namespace TicTacToe
         public static char[] mainBoard = new char[boardSizeSq];
         public static bool gameOver = false;
 
+        public static char otherPlayer(char player) => player == 'X' ? 'O' : 'X';
+
         public static int flatten(int x, int y)
         {
             return x + y * boardSizeLength;

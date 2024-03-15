@@ -9,9 +9,7 @@ namespace TicTacToe
     public class HashQueue<T> : Queue<T>
     {
         private HashSet<T> hashSet = new HashSet<T>();
-        public HashQueue() : base() { 
-            
-        }
+        public HashQueue() : base() { }
 
         public new T Dequeue()
         {
