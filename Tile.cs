@@ -34,10 +34,11 @@ namespace TicTacToe
             gameOver = checkGameOver(mainBoard);
         }
 
-        public void Draw()
+        public void Draw(int size)
         {
             Raylib.DrawRectangle(x, y, width, height, Color.White);
-            Raylib.DrawText(mainBoard[index].ToString(), x,y,80,Color.Black);
+            string text = mainBoard[index].ToString();
+            Raylib.DrawText(text, x + Raylib.MeasureText(text, (size * 3) / 4)/2, y + size/8,(size*3)/4,Color.Black);
         }
     }
 }

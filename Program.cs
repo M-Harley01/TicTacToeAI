@@ -27,62 +27,35 @@ namespace TicTacToe
             //time /= 1;
             //Console.WriteLine($"Depth First Search mean: {time}ms");
             //Func<char[], char, int> searchAlgorithm = Algorithms.MiniMax;
-            Func<char[], char, int> searchAlgorithm = Algorithms.AStarSearch;
-
-            const int screenWidth = 1600;
-            const int screenHeight = 900;
-
-            Raylib.InitWindow(screenWidth, screenHeight, "Tic Tac Toe");
-
-            Raylib.SetTargetFPS(60);
-            Color background = new Color(0, 128, 128, 255);
-
-            Tile[] tiles = new Tile[boardSizeSq];
-            for(int x = 0; x < boardSizeLength; x++) 
-            {
-                for(int y = 0; y < boardSizeLength; y++)
-                {
-                    tiles[flatten(x, y)] = new Tile(screenWidth / 2 + (y * 110), screenHeight / 2 + (x * 110), 100, 100, flatten(x,y));
-                }
-            }
-
+            
+            UserInterface.init();
             while (!Raylib.WindowShouldClose())
             {
-                Raylib.BeginDrawing();
-
-                Raylib.ClearBackground(background);
-
-                for(int i = 0; i < boardSizeSq; i++)
-                {
-                    tiles[i].Draw();
-                }
-
+                UserInterface.draw();
                 if (Raylib.IsMouseButtonPressed(MouseButton.Left))
                 {
                     Vector2 mousePosition = Raylib.GetMousePosition();
-                    for (int i = 0; i < boardSizeSq; i++)
-                    {
-                        if(checkBounds(tiles[i].x, tiles[i].y, tiles[i].width, tiles[i].height, mousePosition))
+                    foreach(Tile tile in UserInterface.tiles) { 
+                        if (checkBounds(tile.x, tile.y, tile.width, tile.height, mousePosition))
                         {
-                            tiles[i].onClick();
+                            tile.onClick();
                         }
                     }
                 }
 
                 if (!gameOver && currentPlayer == 'O')
                 {
+                    stopwatch.Restart();
                     mainBoard[searchAlgorithm.Invoke(mainBoard, 'O')] = currentPlayer;
+                    timeTaken = stopwatch.ElapsedMilliseconds;
                     nextTurn();
                     gameOver = checkGameOver(mainBoard);
                 }
 
 
-                if (gameOver)
-                {
-                    Raylib.DrawText("Game over", 10, 10, 30, Color.White);
-                }
+                
 
-                Raylib.EndDrawing();
+                
             }
 
             Raylib.CloseWindow();

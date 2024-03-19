@@ -10,5 +10,7 @@ namespace TicTacToe
     {
         public static int boardSizeLength = 3;
         public static int boardSizeSq = boardSizeLength * boardSizeLength;
+        public const int SCREEN_WIDTH = 1600;
+        public const int SCREEN_HEIGHT = 900;
     }
 }

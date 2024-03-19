@@ -14,8 +14,6 @@ namespace TicTacToe
 {
     public static class Algorithms
     {
-        public static Random rng = new Random();
-        private static Stopwatch sw = new Stopwatch();
 
         //Pros: Can win.
         //Cons: Only tries to win, doesn't try to not lose. Would rather attempt a risky win than draw.
@@ -418,7 +416,6 @@ namespace TicTacToe
         //Explores all the nodes in a depth first search, takes a long time but does give optimal move.
         public static int MiniMax(char[] board, char player)
         {
-            sw.Start();
             int maxScore = int.MinValue;
             int index = -1;
             List<int> actions = findActions(board);

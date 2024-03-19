@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -13,6 +14,11 @@ namespace TicTacToe
         public static char currentPlayer = 'X';
         public static char[] mainBoard = new char[boardSizeSq];
         public static bool gameOver = false;
+        public static Func<char[], char, int> searchAlgorithm = Algorithms.MiniMax;
+        public static long timeTaken = 0;
+        public static Stopwatch stopwatch = new Stopwatch();
+        public static Random rng = new Random();
+
 
         public static char otherPlayer(char player) => player == 'X' ? 'O' : 'X';
 
