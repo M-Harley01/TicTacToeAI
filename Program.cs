@@ -18,6 +18,7 @@ namespace TicTacToe
 
         static void Main(string[] args)
         {
+
             //long time = 0;
             //for(int i = 0; i < 1; i++)
             //{
@@ -25,7 +26,9 @@ namespace TicTacToe
             //}
             //time /= 1;
             //Console.WriteLine($"Depth First Search mean: {time}ms");
-            Func<char[], char, int> searchAlgorithm = Algorithms.MiniMax;
+            //Func<char[], char, int> searchAlgorithm = Algorithms.MiniMax;
+            Func<char[], char, int> searchAlgorithm = Algorithms.AStarSearch;
+
             const int screenWidth = 1600;
             const int screenHeight = 900;
 
@@ -72,6 +75,7 @@ namespace TicTacToe
                     nextTurn();
                     gameOver = checkGameOver(mainBoard);
                 }
+
 
                 if (gameOver)
                 {

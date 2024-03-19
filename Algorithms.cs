@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static TicTacToe.General;
+using static TicTacToe.Settings;
 
 namespace TicTacToe
 {
@@ -165,21 +167,190 @@ namespace TicTacToe
         }
         public static int IterativeDeepeningDepthFirstSearch(char[] board, char player)
         {
-            throw new NotImplementedException();
+            char startPlayer = player;
+            Stack<Node> frontier = new Stack<Node>();
+            Stack<Node> temporaryHolder = new Stack<Node>();
+            HashSet<Node> visited = new HashSet<Node>();
+
+            frontier.Push(new Node(null, board, -1, (startPlayer == 'X') ? 'O' : 'X'));
+            int maxDepth = 2;
+
+            while (frontier.Count > 0 || temporaryHolder.Count > 0)
+            {
+                Node currentNode = frontier.Pop();
+                while(getDepth(currentNode) > maxDepth)
+                {
+                    temporaryHolder.Push(currentNode);
+
+                    if(frontier.Count == 0) { 
+                        Stack<Node> temp = new Stack<Node>();
+                        temp = temporaryHolder;
+                        temporaryHolder = frontier;
+                        frontier = temp;
+                        maxDepth += 2;
+                    }
+                    currentNode = frontier.Pop();
+                }
+                
+                visited.Add(currentNode);
+                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
+                foreach (int action in findActions(currentNode.board))
+                {
+                    char[] childBoard = (char[])currentNode.board.Clone();
+                    childBoard[action] = player;
+                    Node childNode = new Node(currentNode, childBoard, action, player);
+
+                    if (!visited.Contains(childNode) && !frontier.Contains(childNode))
+                    {
+                        if (getWinner(childBoard) == startPlayer)
+                        {
+                            Console.WriteLine("--------");
+                            for (int x = 0; x < Settings.boardSizeLength; x++)
+                            {
+                                for (int y = 0; y < Settings.boardSizeLength; y++)
+                                {
+                                    Console.Write(childBoard[flatten(x, y)]);
+                                }
+                                Console.WriteLine();
+                            }
+                            Console.WriteLine("--------");
+                            return getFirstMove(childNode);
+                        }
+                        else if (checkGameOver(childBoard))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            frontier.Push(childNode);
+                        }
+                    }
+                }
+
+            }
+            //If unable to win, it will play a random move.
+            Console.Write("RANDOM MOVE!!");
+            return randomMove(board, player);
         }
-        public static int GraphSearch(char[] board, char player)
-        {
-            throw new NotImplementedException();
-        }
+        
         public static int AStarSearch(char[] board, char player)
-        {
-            throw new NotImplementedException();
+        {   
+            char startPlayer = player;
+            PriorityQueue<Node, int> frontier = new PriorityQueue<Node,int>();
+            HashSet<Node> visited = new HashSet<Node>();
+
+            frontier.Enqueue(new Node(null, board, -1, (startPlayer == 'X') ? 'O' : 'X'), 0);
+            while (frontier.Count > 0)
+            {
+                Node currentNode = frontier.Dequeue();
+                visited.Add(currentNode);
+                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
+                foreach (int action in findActions(currentNode.board))
+                {
+                    char[] childBoard = (char[])currentNode.board.Clone();
+                    childBoard[action] = player;
+                    Node childNode = new Node(currentNode, childBoard, action, player);
+
+                    if (!visited.Contains(childNode) /*&& !frontier*/)
+                    {
+                        if (getWinner(childBoard) == startPlayer)
+                        {
+                            Console.WriteLine("TEST!");
+                            Console.WriteLine("--------");
+                            for (int x = 0; x < Settings.boardSizeLength; x++)
+                            {
+                                for (int y = 0; y < Settings.boardSizeLength; y++)
+                                {
+                                    Console.Write(childBoard[flatten(x, y)] == '\0'? ' ' : childBoard[flatten(x,y)]);
+                                }
+                                Console.WriteLine();
+                            }
+                            Console.WriteLine("--------");
+                            return getFirstMove(childNode);
+                        }
+                        else if (checkGameOver(childBoard))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            frontier.Enqueue(childNode, getDepth(childNode)*10 + heuristic(childNode, startPlayer));
+                        }
+                    }
+                } 
+            }
+            //If unable to win, it will play a random move.
+            Console.Write("RANDOM MOVE!!");
+            return randomMove(board, player);
         }
-        public static int BidirectionalSearch(char[] board, char player)
+        
+        private static int heuristic(Node node, char player)
         {
-            throw new NotImplementedException();
+            char[] board = node.board;
+
+            int count = checkInARow(board, player);
+            int otherPlayerCount = checkInARow(board, otherPlayer(player));
+
+          
+
+            if(otherPlayerCount == 3)
+            {
+                return 100;
+            } else if (otherPlayerCount == 2)
+            {
+                return 10000;
+            }
+            
+
+            return otherPlayerCount + count;
         }
 
+        public static int checkInARow(char[] board, char player)
+        {
+            int max = 0;
+            for (int i = 0; i < 2; i++)
+            {
+
+                int foundDiagonal1 = 0;
+                int foundDiagonal2 = 0;
+
+                for (int x = 0; x < boardSizeLength; x++)
+                {
+                    int foundDown = 0;
+                    int foundAcross = 0;
+                    for (int y = 0; y < boardSizeLength; y++)
+                    {
+                        if (board[flatten(x, y)] == player)
+                            foundDown++;
+                        if (board[flatten(y, x)] == player)
+                            foundAcross++;
+                    }
+                    if (foundDown > max)
+                    {
+                        max=foundDown;
+                    }
+                    if (foundAcross > max)
+                    {
+                        max = foundAcross;
+                    }
+
+                    if (board[flatten(x, x)] == player)
+                        foundDiagonal1++;
+                    if (board[flatten((boardSizeLength - 1) - x, x)] == player)
+                        foundDiagonal2++;
+                }
+                if (foundDiagonal1 > max)
+                {
+                    max = foundDiagonal1;
+                }
+                if (foundDiagonal2 > max)
+                {
+                    max = foundDiagonal2;
+                }
+
+            }
+            return max;
+        }
         private static int getFirstMove(Node childNode)
         {
             if (childNode.parent == null)
@@ -190,6 +361,20 @@ namespace TicTacToe
                     return -1;
             }
             return childNode.action;
+        }
+
+        private static int getDepth(Node childNode)
+        {
+            int depth = 0;
+
+            if (childNode.parent == null)
+                return 0;
+            while (childNode.parent != null)
+            {
+                childNode = childNode.parent;
+                depth += 1;
+            }
+            return depth;
         }
 
         private static int scoreMiniMax(char[] board, char currentPlayer, char maximizingPlayer)
