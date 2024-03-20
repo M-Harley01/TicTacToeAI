@@ -43,6 +43,17 @@ namespace TicTacToe
                     }
                 }
 
+                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+                {
+                    Vector2 mousePosition = Raylib.GetMousePosition();
+                    for (int i = 0; i < 5; i++)
+                    {
+                        if (checkBounds(UserInterface.TILES_PANEL_END, UserInterface.TILES_START_Y + 45 * i + 45, 150, 40, mousePosition))
+                        {
+                            searchAlgorithm = algorithms[i];
+                        }
+                    }
+                }
                 if (!gameOver && currentPlayer == 'O')
                 {
                     stopwatch.Restart();

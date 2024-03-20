@@ -272,82 +272,146 @@ namespace TicTacToe
                         }
                         else
                         {
-                            frontier.Enqueue(childNode, getDepth(childNode)*10 + heuristic(childNode, startPlayer));
+                            frontier.Enqueue(childNode, getDepth(childNode) + heuristic(childNode, startPlayer)*10);
                         }
                     }
                 } 
             }
             //If unable to win, it will play a random move.
-            Console.Write("RANDOM MOVE!!");
+            Console.Write("TRY TO DRAW");
+
+            frontier.Enqueue(new Node(null, board, -1, (startPlayer == 'X') ? 'O' : 'X'), 0);
+            while (frontier.Count > 0)
+            {
+                Node currentNode = frontier.Dequeue();
+                visited.Add(currentNode);
+                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
+                foreach (int action in findActions(currentNode.board))
+                {
+                    char[] childBoard = (char[])currentNode.board.Clone();
+                    childBoard[action] = player;
+                    Node childNode = new Node(currentNode, childBoard, action, player);
+
+                    if (!visited.Contains(childNode) /*&& !frontier*/)
+                    {
+                        if (getWinner(childBoard) != otherPlayer(startPlayer))
+                        {
+                            Console.WriteLine("TEST!");
+                            Console.WriteLine("--------");
+                            for (int x = 0; x < Settings.boardSizeLength; x++)
+                            {
+                                for (int y = 0; y < Settings.boardSizeLength; y++)
+                                {
+                                    Console.Write(childBoard[flatten(x, y)] == '\0' ? ' ' : childBoard[flatten(x, y)]);
+                                }
+                                Console.WriteLine();
+                            }
+                            Console.WriteLine("--------");
+                            return getFirstMove(childNode);
+                        }
+                        else if (checkGameOver(childBoard))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            frontier.Enqueue(childNode, getDepth(childNode) + heuristic(childNode, startPlayer) * 10);
+                        }
+                    }
+                }
+            }
+
             return randomMove(board, player);
         }
-        
+
         private static int heuristic(Node node, char player)
         {
             char[] board = node.board;
 
-            int count = checkInARow(board, player);
-            int otherPlayerCount = checkInARow(board, otherPlayer(player));
-
-          
-
-            if(otherPlayerCount == 3)
+            char winner = getWinner(board);
+            int score = 0;
+            if (winner == player)
+                score = -10;
+            else if (winner == otherPlayer(player))
+                score = 10;
+            else
             {
-                return 100;
-            } else if (otherPlayerCount == 2)
-            {
-                return 10000;
+                score = (checkInARow(board, otherPlayer(player)) - checkInARow(board, player)) * 10;
             }
-            
+            return score;
 
-            return otherPlayerCount + count;
+        }
+
+        public static int getNumberOfWinningMoves(char[] board, char player) 
+        { 
+            int count = 0;
+            foreach (int action in findActions(board))
+            {
+                char[] boardCopy = (char[])board.Clone();
+                boardCopy[action] = player;
+                if (getWinner(boardCopy) == player)
+                    count++;
+            }
+            return count;
         }
 
         public static int checkInARow(char[] board, char player)
         {
-            int max = 0;
+            int potentialWin = 0;
             for (int i = 0; i < 2; i++)
             {
 
                 int foundDiagonal1 = 0;
+                bool foundDiagonal1Empty = true;
                 int foundDiagonal2 = 0;
+                bool foundDiagonal2Empty = true;
 
                 for (int x = 0; x < boardSizeLength; x++)
                 {
                     int foundDown = 0;
+                    bool foundDownEmpty = true;
                     int foundAcross = 0;
+                    bool foundAcrossEmpty = true;
                     for (int y = 0; y < boardSizeLength; y++)
                     {
                         if (board[flatten(x, y)] == player)
                             foundDown++;
+                        else if (board[flatten(x, y)] == otherPlayer(player))
+                            foundDownEmpty = false;
                         if (board[flatten(y, x)] == player)
                             foundAcross++;
+                        else if(board[flatten(y, x)] == otherPlayer(player))
+                            foundAcrossEmpty = false;
                     }
-                    if (foundDown > max)
+                    if (foundDown == 2 && foundDownEmpty)
                     {
-                        max=foundDown;
+                        potentialWin += 1;
                     }
-                    if (foundAcross > max)
+                    if (foundAcross == 2 && foundAcrossEmpty)
                     {
-                        max = foundAcross;
+                        potentialWin +=1;
                     }
 
                     if (board[flatten(x, x)] == player)
                         foundDiagonal1++;
+                    else if (board[flatten(x, x)] == otherPlayer(player))
+                        foundDiagonal1Empty = false;
                     if (board[flatten((boardSizeLength - 1) - x, x)] == player)
                         foundDiagonal2++;
+                    else if (board[flatten((boardSizeLength - 1) - x, x)] == otherPlayer(player))
+                        foundDiagonal2Empty = false;
                 }
-                if (foundDiagonal1 > max)
+                if (foundDiagonal1 == 2 && foundDiagonal1Empty)
                 {
-                    max = foundDiagonal1;
+                    potentialWin +=1;
                 }
-                if (foundDiagonal2 > max)
+                if (foundDiagonal2 == 2 && foundDiagonal2Empty)
                 {
-                    max = foundDiagonal2;
+                    potentialWin +=1;
                 }
 
             }
-            return max;
+            return potentialWin;
         }
         private static int getFirstMove(Node childNode)
         {
