@@ -18,16 +18,8 @@ namespace TicTacToe
 
         static void Main(string[] args)
         {
-
-            //long time = 0;
-            //for(int i = 0; i < 1; i++)
-            //{
-            //    time += Tester.testAlgorithm(Algorithms.MiniMax, Tester.Difficulty.MEDIUM);
-            //}
-            //time /= 1;
-            //Console.WriteLine($"Depth First Search mean: {time}ms");
             //Func<char[], char, int> searchAlgorithm = Algorithms.MiniMax;
-            
+
             UserInterface.init();
             while (!Raylib.WindowShouldClose())
             {
@@ -54,19 +46,26 @@ namespace TicTacToe
                         }
                     }
                 }
+
+                if(Raylib.IsKeyPressed(KeyboardKey.R))
+                {
+                    mainBoard = new char[Settings.boardSizeSq];
+                    gameOver = false;
+                }
+
                 if (!gameOver && currentPlayer == 'O')
                 {
                     stopwatch.Restart();
                     mainBoard[searchAlgorithm.Invoke(mainBoard, 'O')] = currentPlayer;
                     timeTaken = stopwatch.ElapsedMilliseconds;
-                    nextTurn();
                     gameOver = checkGameOver(mainBoard);
+                    nextTurn();
                 }
 
 
-                
 
-                
+
+
             }
 
             Raylib.CloseWindow();

@@ -253,17 +253,17 @@ namespace TicTacToe
                     {
                         if (getWinner(childBoard) == startPlayer)
                         {
-                            Console.WriteLine("TEST!");
-                            Console.WriteLine("--------");
-                            for (int x = 0; x < Settings.boardSizeLength; x++)
-                            {
-                                for (int y = 0; y < Settings.boardSizeLength; y++)
-                                {
-                                    Console.Write(childBoard[flatten(x, y)] == '\0'? ' ' : childBoard[flatten(x,y)]);
-                                }
-                                Console.WriteLine();
-                            }
-                            Console.WriteLine("--------");
+                            //Console.WriteLine("TEST!");
+                            //Console.WriteLine("--------");
+                            //for (int x = 0; x < Settings.boardSizeLength; x++)
+                            //{
+                            //    for (int y = 0; y < Settings.boardSizeLength; y++)
+                            //    {
+                            //        Console.Write(childBoard[flatten(x, y)] == '\0'? ' ' : childBoard[flatten(x,y)]);
+                            //    }
+                            //    Console.WriteLine();
+                            //}
+                            //Console.WriteLine("--------");
                             return getFirstMove(childNode);
                         }
                         else if (checkGameOver(childBoard))
@@ -272,7 +272,7 @@ namespace TicTacToe
                         }
                         else
                         {
-                            frontier.Enqueue(childNode, getDepth(childNode) + heuristic(childNode, startPlayer)*10);
+                            frontier.Enqueue(childNode, heuristic(childNode, player, startPlayer));
                         }
                     }
                 } 
@@ -296,17 +296,17 @@ namespace TicTacToe
                     {
                         if (getWinner(childBoard) != otherPlayer(startPlayer))
                         {
-                            Console.WriteLine("TEST!");
-                            Console.WriteLine("--------");
-                            for (int x = 0; x < Settings.boardSizeLength; x++)
-                            {
-                                for (int y = 0; y < Settings.boardSizeLength; y++)
-                                {
-                                    Console.Write(childBoard[flatten(x, y)] == '\0' ? ' ' : childBoard[flatten(x, y)]);
-                                }
-                                Console.WriteLine();
-                            }
-                            Console.WriteLine("--------");
+                            //Console.WriteLine("TEST!");
+                            //Console.WriteLine("--------");
+                            //for (int x = 0; x < Settings.boardSizeLength; x++)
+                            //{
+                            //    for (int y = 0; y < Settings.boardSizeLength; y++)
+                            //    {
+                            //        Console.Write(childBoard[flatten(x, y)] == '\0' ? ' ' : childBoard[flatten(x, y)]);
+                            //    }
+                            //    Console.WriteLine();
+                            //}
+                            //Console.WriteLine("--------");
                             return getFirstMove(childNode);
                         }
                         else if (checkGameOver(childBoard))
@@ -315,7 +315,7 @@ namespace TicTacToe
                         }
                         else
                         {
-                            frontier.Enqueue(childNode, getDepth(childNode) + heuristic(childNode, startPlayer) * 10);
+                            frontier.Enqueue(childNode,  heuristic(childNode, player, startPlayer));
                         }
                     }
                 }
@@ -324,19 +324,28 @@ namespace TicTacToe
             return randomMove(board, player);
         }
 
-        private static int heuristic(Node node, char player)
+        private static int heuristic(Node node, char player, char startPlayer)
         {
             char[] board = node.board;
+            if (node.parent == null)
+                return 0;
+
+            char[] lastBoard = node.parent.board;
 
             char winner = getWinner(board);
             int score = 0;
-            if (winner == player)
-                score = -10;
-            else if (winner == otherPlayer(player))
-                score = 10;
+            if (getNumberOfWinningMoves(lastBoard, otherPlayer(startPlayer)) > 0 && getNumberOfWinningMoves(board, otherPlayer(startPlayer))  == 0)
+            {
+                score = -100;
+            } else if (getNumberOfWinningMoves(lastBoard, otherPlayer(startPlayer)) > 0)
+            {
+                score = 100;
+            }
             else
             {
-                score = (checkInARow(board, otherPlayer(player)) - checkInARow(board, player)) * 10;
+                if (checkInARow(board, startPlayer) > 0)
+                    score -= 10;
+                score += (checkInARow(board, otherPlayer(startPlayer))) * 10;
             }
             return score;
 
@@ -504,6 +513,7 @@ namespace TicTacToe
             {
                 pos = rng.Next(Settings.boardSizeSq);
             }
+            randomMovesTaken++;
             return pos;
         }
     }

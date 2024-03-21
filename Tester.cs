@@ -70,5 +70,14 @@ namespace TicTacToe
             return stopwatch.ElapsedMilliseconds;
         }
 
+        public static bool compareAlgorithm(Func<char[], char, int> algorithm1, Func<char[], char, int> algorithm2, Difficulty difficulty)
+        {
+            char[] board = randomBoard(getHowManyToFill(difficulty));
+            
+            
+            
+            return algorithm1.Invoke(board, 'X') == algorithm2.Invoke(board, 'X');
+        }
+
     }
 }
