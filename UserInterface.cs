@@ -11,14 +11,19 @@ namespace TicTacToe
 {
     public static class UserInterface
     {
-        private static Color background = new Color(0, 128, 128, 255);
         public static Tile[] tiles = new Tile[boardSizeSq];
-        public static DropDown dropDownMenu = new DropDown(TILES_PANEL_END, TILES_START_Y + 45, 225, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
+        public static DropDown dropDownMenu = new DropDown(TILES_PANEL_END+SCREEN_WIDTH/8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
         public const int TILES_PANEL_START = SCREEN_WIDTH / 4;
         public const int TILES_PANEL_END = (SCREEN_WIDTH / 4) * 3;
         public const int TILES_START_Y = SCREEN_HEIGHT / 8;
         public const int TILES_END_Y = (SCREEN_HEIGHT / 8) * 7;
         public const int TILE_GAP = 10;
+        public static Button resetButton = new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y+2, 300, SCREEN_HEIGHT / 8, "Reset", () =>
+        {
+            mainBoard = new char[boardSizeSq];
+            gameOver = false;
+            currentPlayer = 'X';
+        });
 
         private static int tileSize()
         {
@@ -60,6 +65,7 @@ namespace TicTacToe
             Raylib.DrawRectangle(0, 0, SCREEN_WIDTH, TILES_START_Y, Color.Blue);
             Raylib.DrawRectangle(0, TILES_END_Y, SCREEN_WIDTH, SCREEN_HEIGHT - TILES_END_Y, Color.Yellow);
             dropDownMenu.draw();
+            Raylib.DrawText("Select an algorithm", TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_START_Y+15, 30, Color.White);
 
             Raylib.DrawText("Using: " + searchAlgorithm.Method.Name, 0, 0, 60, Color.White);
 
@@ -74,7 +80,7 @@ namespace TicTacToe
             {
                 Raylib.DrawText("Game over", 0, 90, 30, Color.White);
             }
-
+            resetButton.draw();
             Raylib.EndDrawing();
         }
 

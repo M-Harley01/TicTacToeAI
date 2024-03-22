@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static TicTacToe.Settings;
 
 namespace TicTacToe
 {
@@ -33,19 +34,16 @@ namespace TicTacToe
 
         public void draw()
         {
-            Raylib.DrawRectangle(x,y,width, open? totalHeight : height, Color.DarkGray);
-            Raylib.DrawRectangle(x + 5, y + 5, width - 10, height - 10, Color.LightGray);
-            Raylib.DrawText(options[selected], x + 10, y + 5, 20, Color.Black);
-            Raylib.DrawRectangleLinesEx(new Rectangle(x + width - 40, y, 40, height), 2, Color.DarkGray);
-            Raylib.DrawRectangle(x + width - 30, y + (height - 20) / 2, 20, 20, Color.DarkGray);
+            Raylib.DrawRectangle(x,y,width, open? totalHeight : height, uiSecondary);
+            Raylib.DrawRectangle(x + 5, y + 5, width - 10, height - 10, uiPrimary);
+            Raylib.DrawText(options[selected], x + 10, y + 5, 20, uiTextSecondary);
+            Raylib.DrawRectangleLinesEx(new Rectangle(x + width - 40, y, 40, height), 2, uiSecondary);
+            Raylib.DrawRectangle(x + width - 30, y + (height - 20) / 2, 20, 20, uiSecondary);
 
-
-            for (int i = 0; i < options.Length; i++)
+            for (int i = 0; i < options.Length && open; i++)
             {
-                if (!open)
-                    break;
-                Raylib.DrawRectangle(x+5, y + ((height)*(i+1)), width - 10, height - 10, Color.LightGray);
-                Raylib.DrawText(options[i], x +10, y + ((height) * (i + 1)), 20, Color.Black);
+                Raylib.DrawRectangle(x+5, y + ((height)*(i+1)), width - 10, height - 10, uiPrimary);
+                Raylib.DrawText(options[i], x +10, y + ((height) * (i + 1)), 20, uiTextSecondary);
             }
         }
 
@@ -73,11 +71,6 @@ namespace TicTacToe
                     }
                 }
             }
-        }
-
-        public int getSelected()
-        {
-            return selected;
         }
 
     }

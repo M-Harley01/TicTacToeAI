@@ -14,8 +14,8 @@ namespace TicTacToe
         public static char currentPlayer = 'X';
         public static char[] mainBoard = new char[boardSizeSq];
         public static bool gameOver = false;
-        public static Func<char[], char, int> searchAlgorithm = Algorithms.AStarSearch;
         public static Func<char[], char, int>[] algorithms = new Func<char[], char, int>[] {Algorithms.BreadthFirst, Algorithms.DepthFirstSearch, Algorithms.IterativeDeepeningDepthFirstSearch, Algorithms.AStarSearch, Algorithms.MiniMax }; 
+        public static Func<char[], char, int> searchAlgorithm = algorithms[0];
         public static long timeTaken = 0;
         public static Stopwatch stopwatch = new Stopwatch();
         public static Random rng = new Random();

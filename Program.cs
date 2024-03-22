@@ -37,13 +37,12 @@ namespace TicTacToe
                     {
                         UserInterface.dropDownMenu.onClick(mousePosition);
                     }
+                    if(checkBounds(UserInterface.resetButton.x, UserInterface.resetButton.y, UserInterface.resetButton.width, UserInterface.resetButton.height, mousePosition))
+                    {
+                        UserInterface.resetButton.onClick();
+                    }
                 }
 
-                if(Raylib.IsKeyPressed(KeyboardKey.R))
-                {
-                    mainBoard = new char[Settings.boardSizeSq];
-                    gameOver = false;
-                }
 
                 if (!gameOver && currentPlayer == 'O')
                 {
