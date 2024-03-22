@@ -7,56 +7,28 @@ namespace TicTacToe
 {
     internal class Program
     {
-        static bool checkBounds(int x, int y, int width, int height, Vector2 mouse)
+
+        static void aiTurn()
         {
-            if (mouse.X < x || mouse.X > width + x || mouse.Y < y || mouse.Y > y + height)
-            {
-                return false;
-            }
-            return true;
+            stopwatch.Restart();
+            mainBoard[searchAlgorithm.Invoke(mainBoard, aiPlayer)] = currentPlayer;
+            timeTaken = stopwatch.ElapsedMilliseconds;
+            gameOver = checkGameOver(mainBoard);
+            nextTurn();
         }
 
         static void Main(string[] args)
         {
-            //Func<char[], char, int> searchAlgorithm = Algorithms.MiniMax;
-            updateBoardSize(4);
             UserInterface.init();
+
             while (!Raylib.WindowShouldClose())
             {
                 UserInterface.draw();
-                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-                {
-                    Vector2 mousePosition = Raylib.GetMousePosition();
-                    foreach(Tile tile in UserInterface.tiles) { 
-                        if (checkBounds(tile.x, tile.y, tile.width, tile.height, mousePosition))
-                        {
-                            tile.onClick();
-                        }
-                    }
-                    if (checkBounds(UserInterface.dropDownMenu.x, UserInterface.dropDownMenu.y, UserInterface.dropDownMenu.width, UserInterface.dropDownMenu.getHeight(), mousePosition))
-                    {
-                        UserInterface.dropDownMenu.onClick(mousePosition);
-                    }
-                    else if(checkBounds(UserInterface.resetButton.x, UserInterface.resetButton.y, UserInterface.resetButton.width, UserInterface.resetButton.height, mousePosition))
-                    {
-                        UserInterface.resetButton.onClick();
-                    }
-                    else if (checkBounds(UserInterface.swapButton.x, UserInterface.swapButton.y, UserInterface.swapButton.width, UserInterface.swapButton.height, mousePosition))
-                    {
-                        UserInterface.swapButton.onClick();
-                    }
-                }
+                UserInterface.handleMouse();
 
                 if (!gameOver && currentPlayer == aiPlayer)
-                {
-                    stopwatch.Restart();
-                    mainBoard[searchAlgorithm.Invoke(mainBoard, aiPlayer)] = currentPlayer;
-                    timeTaken = stopwatch.ElapsedMilliseconds;
-                    gameOver = checkGameOver(mainBoard);
-                    nextTurn();
-                }
-
-            }
+                    aiTurn();
+            } 
 
             Raylib.CloseWindow();
         }

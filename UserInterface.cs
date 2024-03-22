@@ -6,26 +6,28 @@ using System.Text;
 using System.Threading.Tasks;
 using static TicTacToe.Settings;
 using static TicTacToe.General;
+using System.Numerics;
 
 namespace TicTacToe
 {
     public static class UserInterface
     {
-        public static Tile[] tiles = new Tile[boardSizeSq];
-        public static DropDown dropDownMenu = new DropDown(TILES_PANEL_END+SCREEN_WIDTH/8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
-        public const int TILES_PANEL_START = SCREEN_WIDTH / 4;
-        public const int TILES_PANEL_END = (SCREEN_WIDTH / 4) * 3;
-        public const int TILES_START_Y = SCREEN_HEIGHT / 8;
-        public const int TILES_END_Y = (SCREEN_HEIGHT / 8) * 7;
-        public const int TILE_GAP = 10;
-        public static Button resetButton = new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Reset", () =>
+        private const int TILES_PANEL_START = SCREEN_WIDTH / 4;
+        private const int TILES_PANEL_END = (SCREEN_WIDTH / 4) * 3;
+        private const int TILES_START_Y = SCREEN_HEIGHT / 8;
+        private const int TILES_END_Y = (SCREEN_HEIGHT / 8) * 7;
+        private const int TILE_GAP = 10;
+
+        private static Tile[] tiles = new Tile[boardSizeSq];
+        private static DropDown dropDownMenu = new DropDown(TILES_PANEL_END+SCREEN_WIDTH/8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
+        private static Button resetButton = new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Reset", () =>
         {
             mainBoard = new char[boardSizeSq];
             gameOver = false;
             currentPlayer = manualPlayer;
         });
 
-        public static Button swapButton = new Button(50, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Swap", () =>
+        private static Button swapButton = new Button(50, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Swap", () =>
         {
             aiPlayer = otherPlayer(aiPlayer);
             manualPlayer = otherPlayer(manualPlayer);
@@ -95,5 +97,31 @@ namespace TicTacToe
             Raylib.EndDrawing();
         }
 
+        public static void handleMouse()
+        {
+            if (Raylib.IsMouseButtonPressed(MouseButton.Left))
+            {
+                Vector2 mousePosition = Raylib.GetMousePosition();
+                foreach (Tile tile in tiles)
+                {
+                    if (checkBounds(tile.x, tile.y, tile.width, tile.height, mousePosition))
+                    {
+                        tile.onClick();
+                    }
+                }
+                if (checkBounds(dropDownMenu.x, dropDownMenu.y, dropDownMenu.width, dropDownMenu.getHeight(), mousePosition))
+                {
+                    dropDownMenu.onClick(mousePosition);
+                }
+                else if (checkBounds(resetButton.x, resetButton.y, resetButton.width, resetButton.height, mousePosition))
+                {
+                    resetButton.onClick();
+                }
+                else if (checkBounds(swapButton.x, swapButton.y, swapButton.width, swapButton.height, mousePosition))
+                {
+                    swapButton.onClick();
+                }
+            }
+        }
     }
 }

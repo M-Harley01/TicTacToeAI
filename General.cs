@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Raylib_cs;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -96,32 +97,36 @@ namespace TicTacToe
                         if (board[flatten(y, x)] == checking)
                             foundAcross++;
                     }
-                    if (foundDown == boardSizeLength)
-                    {
+
+                    if (foundDown == boardSizeLength || foundAcross == boardSizeLength)
                         return checking;
-                    }
-                    if (foundAcross == boardSizeLength)
-                    {
-                        return checking;
-                    }
 
                     if (board[flatten(x, x)] == checking)
                         foundDiagonal1++;
                     if (board[flatten((boardSizeLength - 1) - x, x)] == checking)
                         foundDiagonal2++;
                 }
-                if (foundDiagonal1 == boardSizeLength)
-                {
+
+                if (foundDiagonal1 == boardSizeLength || foundDiagonal2 == boardSizeLength)
                     return checking;
-                }
-                if (foundDiagonal2 == boardSizeLength)
-                {
-                    return checking;
-                }
 
                 checking = 'O';
             }
             return '\0';
+        }
+
+        public static bool checkBounds(int x, int y, int width, int height, Vector2 mouse)
+        {
+            if (mouse.X < x || mouse.X > width + x || mouse.Y < y || mouse.Y > y + height)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool checkBounds(Rectangle rectangle, Vector2 mouse)
+        {
+            return checkBounds((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height, mouse);
         }
 
     }
