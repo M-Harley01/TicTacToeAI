@@ -18,6 +18,8 @@ namespace TicTacToe
         public static Color uiSecondary = Color.DarkGray;
         public static Color uiTextSecondary = Color.Black;
         public static Color uiTextPrimary = Color.White;
+        public static char aiPlayer = 'X';
+        public static char manualPlayer = 'O';
 
     }
 }

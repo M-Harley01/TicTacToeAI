@@ -19,7 +19,7 @@ namespace TicTacToe
         static void Main(string[] args)
         {
             //Func<char[], char, int> searchAlgorithm = Algorithms.MiniMax;
-
+            updateBoardSize(4);
             UserInterface.init();
             while (!Raylib.WindowShouldClose())
             {
@@ -37,25 +37,24 @@ namespace TicTacToe
                     {
                         UserInterface.dropDownMenu.onClick(mousePosition);
                     }
-                    if(checkBounds(UserInterface.resetButton.x, UserInterface.resetButton.y, UserInterface.resetButton.width, UserInterface.resetButton.height, mousePosition))
+                    else if(checkBounds(UserInterface.resetButton.x, UserInterface.resetButton.y, UserInterface.resetButton.width, UserInterface.resetButton.height, mousePosition))
                     {
                         UserInterface.resetButton.onClick();
                     }
+                    else if (checkBounds(UserInterface.swapButton.x, UserInterface.swapButton.y, UserInterface.swapButton.width, UserInterface.swapButton.height, mousePosition))
+                    {
+                        UserInterface.swapButton.onClick();
+                    }
                 }
 
-
-                if (!gameOver && currentPlayer == 'O')
+                if (!gameOver && currentPlayer == aiPlayer)
                 {
                     stopwatch.Restart();
-                    mainBoard[searchAlgorithm.Invoke(mainBoard, 'O')] = currentPlayer;
+                    mainBoard[searchAlgorithm.Invoke(mainBoard, aiPlayer)] = currentPlayer;
                     timeTaken = stopwatch.ElapsedMilliseconds;
                     gameOver = checkGameOver(mainBoard);
                     nextTurn();
                 }
-
-
-
-
 
             }
 

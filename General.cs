@@ -11,7 +11,7 @@ namespace TicTacToe
 {
     public static class General
     {
-        public static char currentPlayer = 'X';
+        public static char currentPlayer = manualPlayer;
         public static char[] mainBoard = new char[boardSizeSq];
         public static bool gameOver = false;
         public static Func<char[], char, int>[] algorithms = new Func<char[], char, int>[] {Algorithms.BreadthFirst, Algorithms.DepthFirstSearch, Algorithms.IterativeDeepeningDepthFirstSearch, Algorithms.AStarSearch, Algorithms.MiniMax }; 
@@ -67,6 +67,12 @@ namespace TicTacToe
                     actions.Add(i);
             }
             return actions;
+        }
+
+        public static void updateBoardSize(int newBoardSizeLength)
+        {
+            boardSizeLength = newBoardSizeLength;
+            boardSizeSq = boardSizeLength*boardSizeLength;
         }
         
         //TODO: OPTIMISE THIS PLEASE

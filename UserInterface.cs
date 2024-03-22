@@ -22,7 +22,13 @@ namespace TicTacToe
         {
             mainBoard = new char[boardSizeSq];
             gameOver = false;
-            currentPlayer = 'X';
+            currentPlayer = manualPlayer;
+        });
+
+        public static Button swapButton = new Button(50, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Swap", () =>
+        {
+            aiPlayer = otherPlayer(aiPlayer);
+            manualPlayer = otherPlayer(manualPlayer);
         });
 
         private static int tileSize()
@@ -41,17 +47,19 @@ namespace TicTacToe
         {
             Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tic Tac Toe");
             Raylib.SetTargetFPS(60);
+            generateTiles();
+        }
 
-
-
+        public static void generateTiles()
+        {
+            tiles = new Tile[boardSizeSq];
             for (int x = 0; x < boardSizeLength; x++)
             {
                 for (int y = 0; y < boardSizeLength; y++)
                 {
-                    tiles[flatten(x, y)] = new Tile(centreX() + (TILE_GAP + tileSize())*y, TILES_START_Y + TILE_GAP/2 + (TILE_GAP + tileSize()) * x, tileSize(), tileSize(), flatten(x, y));
+                    tiles[flatten(x, y)] = new Tile(centreX() + (TILE_GAP + tileSize()) * y, TILES_START_Y + TILE_GAP / 2 + (TILE_GAP + tileSize()) * x, tileSize(), tileSize(), flatten(x, y));
                 }
             }
-
         }
 
         public static void draw()
@@ -75,12 +83,15 @@ namespace TicTacToe
             }
 
             Raylib.DrawText("Last Move Took: " + timeTaken + "ms", 0, 60, 30, Color.White);
+            Raylib.DrawText($"Manual Player: {manualPlayer}", 0, 90, 30, Color.White);
+            Raylib.DrawText($"Ai Player: {aiPlayer}", 0, 120, 30, Color.White);
 
             if (gameOver)
             {
-                Raylib.DrawText("Game over", 0, 90, 30, Color.White);
+                Raylib.DrawText("Game over", 0, 150, 30, Color.White);
             }
             resetButton.draw();
+            swapButton.draw();
             Raylib.EndDrawing();
         }
 
