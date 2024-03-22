@@ -33,17 +33,9 @@ namespace TicTacToe
                             tile.onClick();
                         }
                     }
-                }
-
-                if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-                {
-                    Vector2 mousePosition = Raylib.GetMousePosition();
-                    for (int i = 0; i < 5; i++)
+                    if (checkBounds(UserInterface.dropDownMenu.x, UserInterface.dropDownMenu.y, UserInterface.dropDownMenu.width, UserInterface.dropDownMenu.getHeight(), mousePosition))
                     {
-                        if (checkBounds(UserInterface.TILES_PANEL_END, UserInterface.TILES_START_Y + 45 * i + 45, 150, 40, mousePosition))
-                        {
-                            searchAlgorithm = algorithms[i];
-                        }
+                        UserInterface.dropDownMenu.onClick(mousePosition);
                     }
                 }
 

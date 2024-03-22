@@ -13,6 +13,7 @@ namespace TicTacToe
     {
         private static Color background = new Color(0, 128, 128, 255);
         public static Tile[] tiles = new Tile[boardSizeSq];
+        public static DropDown dropDownMenu = new DropDown(TILES_PANEL_END, TILES_START_Y + 45, 225, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
         public const int TILES_PANEL_START = SCREEN_WIDTH / 4;
         public const int TILES_PANEL_END = (SCREEN_WIDTH / 4) * 3;
         public const int TILES_START_Y = SCREEN_HEIGHT / 8;
@@ -29,37 +30,6 @@ namespace TicTacToe
             int totalX = (TILE_GAP + tileSize()) * boardSizeLength - TILE_GAP;
             int area = TILES_PANEL_END - TILES_PANEL_START;
             return TILES_PANEL_START + (area - totalX)/2;
-        }
-
-        public static void chooseAlgorithm()
-        {
-
-            Raylib.DrawText("choose an algorithm: ", TILES_PANEL_END, 120, 30 ,Color.White);
-
-            for(int i = 0; i < 5; i++)
-            {
-                Raylib.DrawRectangle(TILES_PANEL_END, TILES_START_Y + 45 * i + 45,150,40, Color.White);
-                if(i == 0)
-                {
-                    Raylib.DrawText("Breadth first", TILES_PANEL_END + 5, TILES_START_Y + 45 * i + 45, 20, Color.Black);
-                }
-                else if(i == 1)
-                {
-                    Raylib.DrawText("Depth first", TILES_PANEL_END + 5, TILES_START_Y + 45 * i + 45, 20, Color.Black);
-                }
-                else if (i == 2)
-                {
-                    Raylib.DrawText("Iterative Deepening Depth first", TILES_PANEL_END + 5, TILES_START_Y + 45 * i + 45, 20, Color.Black);
-                }
-                else if (i == 3)
-                {
-                    Raylib.DrawText("A * search ", TILES_PANEL_END + 5, TILES_START_Y + 45 * i + 45, 20, Color.Black);
-                }
-                else if(i == 4)
-                {
-                    Raylib.DrawText("Mini Max search", TILES_PANEL_END + 5, TILES_START_Y + 45 * i + 45, 20, Color.Black);
-                }
-            }
         }
 
         public static void init()
@@ -89,7 +59,7 @@ namespace TicTacToe
             Raylib.DrawRectangle(TILES_PANEL_END, 0, SCREEN_WIDTH - TILES_PANEL_END, SCREEN_HEIGHT, Color.Green);
             Raylib.DrawRectangle(0, 0, SCREEN_WIDTH, TILES_START_Y, Color.Blue);
             Raylib.DrawRectangle(0, TILES_END_Y, SCREEN_WIDTH, SCREEN_HEIGHT - TILES_END_Y, Color.Yellow);
-            chooseAlgorithm();
+            dropDownMenu.draw();
 
             Raylib.DrawText("Using: " + searchAlgorithm.Method.Name, 0, 0, 60, Color.White);
 
