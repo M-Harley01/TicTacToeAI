@@ -18,7 +18,7 @@ namespace TicTacToe
         public const int TILES_START_Y = SCREEN_HEIGHT / 8;
         public const int TILES_END_Y = (SCREEN_HEIGHT / 8) * 7;
         public const int TILE_GAP = 10;
-        public static Button resetButton = new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y+2, 300, SCREEN_HEIGHT / 8, "Reset", () =>
+        public static Button resetButton = new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Reset", () =>
         {
             mainBoard = new char[boardSizeSq];
             gameOver = false;
@@ -60,10 +60,10 @@ namespace TicTacToe
 
             Raylib.ClearBackground(background);
 
-            Raylib.DrawRectangle(0, 0, TILES_PANEL_START, SCREEN_HEIGHT, Color.Red);
-            Raylib.DrawRectangle(TILES_PANEL_END, 0, SCREEN_WIDTH - TILES_PANEL_END, SCREEN_HEIGHT, Color.Green);
-            Raylib.DrawRectangle(0, 0, SCREEN_WIDTH, TILES_START_Y, Color.Blue);
-            Raylib.DrawRectangle(0, TILES_END_Y, SCREEN_WIDTH, SCREEN_HEIGHT - TILES_END_Y, Color.Yellow);
+            //Raylib.DrawRectangle(0, 0, TILES_PANEL_START, SCREEN_HEIGHT, Color.Red);
+            //Raylib.DrawRectangle(TILES_PANEL_END, 0, SCREEN_WIDTH - TILES_PANEL_END, SCREEN_HEIGHT, Color.Green);
+            //Raylib.DrawRectangle(0, 0, SCREEN_WIDTH, TILES_START_Y, Color.Blue);
+            //Raylib.DrawRectangle(0, TILES_END_Y, SCREEN_WIDTH, SCREEN_HEIGHT - TILES_END_Y, Color.Yellow);
             dropDownMenu.draw();
             Raylib.DrawText("Select an algorithm", TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_START_Y+15, 30, Color.White);
 
