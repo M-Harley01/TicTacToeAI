@@ -21,6 +21,7 @@ namespace TicTacToe
         public static Stopwatch stopwatch = new Stopwatch();
         public static Random rng = new Random();
         public static int randomMovesTaken = 0;
+        public static bool inMenu = true;
 
         public static char otherPlayer(char player) => player == 'X' ? 'O' : 'X';
 
