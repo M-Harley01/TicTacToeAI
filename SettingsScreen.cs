@@ -18,12 +18,12 @@ namespace TicTacToe
             currentScreen = new MenuScreen();
         });
 
-        private static Button increaseBoardSizeButton = new Button(350, 150, 100, 100, "+", () =>
+        private static Button increaseBoardSizeButton = new Button(SCREEN_WIDTH - 150, 150, 100, 100, "+", () =>
         {
             updateBoardSize(boardSizeLength + 1);
         });
 
-        private static Button decreaseBoardSizeButton = new Button(50, 150, 100, 100, "-", () =>
+        private static Button decreaseBoardSizeButton = new Button(SCREEN_WIDTH - 450, 150, 100, 100, "-", () =>
         {  
             updateBoardSize(boardSizeLength - 1);
         });
@@ -34,7 +34,8 @@ namespace TicTacToe
             Raylib.ClearBackground(background);
             swapButton.draw();
             increaseBoardSizeButton.draw();
-            Raylib.DrawText($"{boardSizeLength}x{boardSizeLength}", 180, 160, 80, uiTextPrimary);
+            Raylib.DrawText($"Board Size: ", 50, 160, 80, uiTextPrimary);
+            Raylib.DrawText($"{boardSizeLength}x{boardSizeLength}", SCREEN_WIDTH - 450 + 130, 160, 80, uiTextPrimary);
             decreaseBoardSizeButton.draw();
             Raylib.EndDrawing();
         }

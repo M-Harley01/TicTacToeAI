@@ -26,15 +26,23 @@ namespace TicTacToe
             currentPlayer = manualPlayer;
         });
 
-        private static Button swapButton = new Button(50, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Swap", () =>
+        private static Button swapButton = new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y-150, 300, SCREEN_HEIGHT / 8, "Swap", () =>
         {
             aiPlayer = otherPlayer(aiPlayer);
             manualPlayer = otherPlayer(manualPlayer);
         });
 
+        private static Button backButton = new Button(50, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Back", () =>
+        {
+            currentScreen = new MenuScreen();
+        });
+
         public GameScreen()
         {
             generateTiles();
+            mainBoard = new char[boardSizeSq];
+            gameOver = false;
+            currentPlayer = manualPlayer;
         }
 
         private static int tileSize()
@@ -91,6 +99,7 @@ namespace TicTacToe
             }
             resetButton.draw();
             swapButton.draw();
+            backButton.draw();
             Raylib.EndDrawing();
         }
 
@@ -117,6 +126,10 @@ namespace TicTacToe
                 else if (checkBounds(swapButton.x, swapButton.y, swapButton.width, swapButton.height, mousePosition))
                 {
                     swapButton.onClick();
+                }
+                else if (checkBounds(backButton.x, backButton.y, backButton.width, backButton.height, mousePosition))
+                {
+                    backButton.onClick();
                 }
             }
         }
