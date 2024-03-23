@@ -7,7 +7,6 @@ namespace TicTacToe
 {
     internal class Program
     {
-
         static void aiTurn()
         {
             stopwatch.Restart();
@@ -19,12 +18,13 @@ namespace TicTacToe
 
         static void Main(string[] args)
         {
-            UserInterface.init();
+            Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tic Tac Toe");
+            Raylib.SetTargetFPS(60);
 
             while (!Raylib.WindowShouldClose())
             {
-                UserInterface.draw();
-                UserInterface.handleMouse();
+                currentScreen.draw();
+                currentScreen.handleMouse();
 
                 if (!gameOver && currentPlayer == aiPlayer)
                     aiTurn();

@@ -2,15 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using static TicTacToe.Settings;
 using static TicTacToe.General;
-using System.Numerics;
+using static TicTacToe.Settings;
 
 namespace TicTacToe
 {
-    public static class UserInterface
+    public class GameScreen : IScreen
     {
         private const int TILES_PANEL_START = SCREEN_WIDTH / 4;
         private const int TILES_PANEL_END = (SCREEN_WIDTH / 4) * 3;
@@ -18,7 +18,7 @@ namespace TicTacToe
         private const int TILES_END_Y = (SCREEN_HEIGHT / 8) * 7;
         private const int TILE_GAP = 10;
         private static Tile[] tiles = new Tile[boardSizeSq];
-        private static DropDown dropDownMenu = new DropDown(TILES_PANEL_END+SCREEN_WIDTH/8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
+        private static DropDown dropDownMenu = new DropDown(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
         private static Button resetButton = new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Reset", () =>
         {
             mainBoard = new char[boardSizeSq];
@@ -32,28 +32,21 @@ namespace TicTacToe
             manualPlayer = otherPlayer(manualPlayer);
         });
 
-        private static Button startButton = new Button(SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/ 2 - 50, 300, 100, "Start", () =>
+        public GameScreen()
         {
-            inMenu = false;
             generateTiles();
-        });
+        }
 
         private static int tileSize()
         {
-            return ((SCREEN_HEIGHT / 4)*3 - TILE_GAP * boardSizeLength) / boardSizeLength;
+            return ((SCREEN_HEIGHT / 4) * 3 - TILE_GAP * boardSizeLength) / boardSizeLength;
         }
 
         private static int centreX()
         {
             int totalX = (TILE_GAP + tileSize()) * boardSizeLength - TILE_GAP;
             int area = TILES_PANEL_END - TILES_PANEL_START;
-            return TILES_PANEL_START + (area - totalX)/2;
-        }
-
-        public static void init()
-        {
-            Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tic Tac Toe");
-            Raylib.SetTargetFPS(60);   
+            return TILES_PANEL_START + (area - totalX) / 2;
         }
 
         public static void generateTiles()
@@ -67,34 +60,21 @@ namespace TicTacToe
                 }
             }
         }
-
-        public static void drawMenu()
-        {
-            //TODO: make menu
-            startButton.draw();
-        }
-
-        public static void draw()
+        public void draw()
         {
             Raylib.BeginDrawing();
 
             Raylib.ClearBackground(background);
 
-            if(inMenu)
-            {
-                drawMenu();
-                Raylib.EndDrawing();
-                return;
-            }
+            dropDownMenu.draw();
+            Raylib.DrawText("Select an algorithm", TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 15, 30, Color.White);
+
+            Raylib.DrawText("Using: " + searchAlgorithm.Method.Name, 0, 0, 60, Color.White);
 
             //Raylib.DrawRectangle(0, 0, TILES_PANEL_START, SCREEN_HEIGHT, Color.Red);
             //Raylib.DrawRectangle(TILES_PANEL_END, 0, SCREEN_WIDTH - TILES_PANEL_END, SCREEN_HEIGHT, Color.Green);
             //Raylib.DrawRectangle(0, 0, SCREEN_WIDTH, TILES_START_Y, Color.Blue);
             //Raylib.DrawRectangle(0, TILES_END_Y, SCREEN_WIDTH, SCREEN_HEIGHT - TILES_END_Y, Color.Yellow);
-            dropDownMenu.draw();
-            Raylib.DrawText("Select an algorithm", TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_START_Y+15, 30, Color.White);
-
-            Raylib.DrawText("Using: " + searchAlgorithm.Method.Name, 0, 0, 60, Color.White);
 
             for (int i = 0; i < boardSizeSq; i++)
             {
@@ -114,24 +94,11 @@ namespace TicTacToe
             Raylib.EndDrawing();
         }
 
-        private static void handleMouseMenu(Vector2 mousePosition)
-        {
-            if (checkBounds(startButton.x, startButton.y, startButton.width, startButton.height, mousePosition))
-            {
-                startButton.onClick();
-            }
-        }
-
-        public static void handleMouse()
+        public void handleMouse()
         {
             if (Raylib.IsMouseButtonPressed(MouseButton.Left))
-            {   
+            {
                 Vector2 mousePosition = Raylib.GetMousePosition();
-                if (inMenu)
-                {
-                    handleMouseMenu(mousePosition);
-                    return;
-                }
                 foreach (Tile tile in tiles)
                 {
                     if (checkBounds(tile.x, tile.y, tile.width, tile.height, mousePosition))
@@ -153,7 +120,5 @@ namespace TicTacToe
                 }
             }
         }
-
-
     }
 }
