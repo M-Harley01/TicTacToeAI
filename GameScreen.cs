@@ -19,23 +19,24 @@ namespace TicTacToe
         private const int TILE_GAP = 10;
         private static Tile[] tiles = new Tile[boardSizeSq];
         private static DropDown dropDownMenu = new DropDown(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
-        private static Button resetButton = new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Reset", () =>
-        {
-            mainBoard = new char[boardSizeSq];
-            gameOver = false;
-            currentPlayer = manualPlayer;
-        });
-
-        private static Button swapButton = new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y-150, 300, SCREEN_HEIGHT / 8, "Swap", () =>
-        {
-            aiPlayer = otherPlayer(aiPlayer);
-            manualPlayer = otherPlayer(manualPlayer);
-        });
-
-        private static Button backButton = new Button(50, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Back", () =>
-        {
+        private static Button[] buttons = [
+            new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Reset", () =>
+            {
+                mainBoard = new char[boardSizeSq];
+                gameOver = false;
+                currentPlayer = manualPlayer;
+            }),
+            new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y-150, 300, SCREEN_HEIGHT / 8, "Swap", () =>
+            {
+                aiPlayer = otherPlayer(aiPlayer);
+                manualPlayer = otherPlayer(manualPlayer);
+            }),
+            new Button(50, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Back", () =>
+            {
             currentScreen = new MenuScreen();
-        });
+            })
+        ];
+
 
         public GameScreen()
         {
@@ -97,9 +98,10 @@ namespace TicTacToe
             {
                 Raylib.DrawText("Game over", 0, 150, 30, Color.White);
             }
-            resetButton.draw();
-            swapButton.draw();
-            backButton.draw();
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                buttons[i].draw();
+            }
             Raylib.EndDrawing();
         }
 
@@ -108,6 +110,7 @@ namespace TicTacToe
             if (Raylib.IsMouseButtonPressed(MouseButton.Left))
             {
                 Vector2 mousePosition = Raylib.GetMousePosition();
+
                 foreach (Tile tile in tiles)
                 {
                     if (checkBounds(tile.x, tile.y, tile.width, tile.height, mousePosition))
@@ -115,21 +118,18 @@ namespace TicTacToe
                         tile.onClick();
                     }
                 }
+
+                for (int i = 0; i < buttons.Length; i++)
+                {
+                    if (checkBounds(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
+                    {
+                        buttons[i].onClick();
+                    }
+                }
+
                 if (checkBounds(dropDownMenu.x, dropDownMenu.y, dropDownMenu.width, dropDownMenu.getHeight(), mousePosition))
                 {
                     dropDownMenu.onClick(mousePosition);
-                }
-                else if (checkBounds(resetButton.x, resetButton.y, resetButton.width, resetButton.height, mousePosition))
-                {
-                    resetButton.onClick();
-                }
-                else if (checkBounds(swapButton.x, swapButton.y, swapButton.width, swapButton.height, mousePosition))
-                {
-                    swapButton.onClick();
-                }
-                else if (checkBounds(backButton.x, backButton.y, backButton.width, backButton.height, mousePosition))
-                {
-                    backButton.onClick();
                 }
             }
         }

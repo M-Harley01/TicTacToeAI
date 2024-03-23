@@ -21,7 +21,7 @@ namespace TicTacToe
             Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tic Tac Toe");
             Raylib.SetTargetFPS(60);
 
-            while (!Raylib.WindowShouldClose())
+            while (!Raylib.WindowShouldClose() && !quit)
             {
                 currentScreen.draw();
                 currentScreen.handleMouse();

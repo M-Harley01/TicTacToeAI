@@ -22,6 +22,7 @@ namespace TicTacToe
         public static Random rng = new Random();
         public static int randomMovesTaken = 0;
         public static IScreen currentScreen = new MenuScreen();
+        public static bool quit = false;
 
         public static char otherPlayer(char player) => player == 'X' ? 'O' : 'X';
 

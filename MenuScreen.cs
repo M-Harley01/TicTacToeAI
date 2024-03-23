@@ -12,23 +12,31 @@ namespace TicTacToe
 {
     internal class MenuScreen : IScreen
     {
-        
-        private static Button startButton = new Button(SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 50, 300, 100, "Start", () =>
-        {
-            currentScreen = new GameScreen();
-        });
+        private static Button[] buttons = [
+            new Button(SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 50, 300, 100, "Start", () =>
+            {
+                currentScreen = new GameScreen();
+            }),
+            new Button(SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 100, 300, 100, "Settings", () =>
+            {
+                currentScreen = new SettingsScreen();
+            }),
+            new Button(SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 250, 300, 100, "Quit", () =>
+            {
+                quit = true;
+            })
+        ];
 
-        private static Button settingsButton = new Button(SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 + 100, 300, 100, "Settings", () =>
-        {
-            currentScreen = new SettingsScreen();
-        });
 
         public void draw()
         {
             Raylib.BeginDrawing();
             Raylib.ClearBackground(background);
-            startButton.draw();
-            settingsButton.draw();
+            Raylib.DrawText("Tic Tac Toe AI", (SCREEN_WIDTH - Raylib.MeasureText("Tic Tac Toe AI", 100))/2, SCREEN_HEIGHT / 8, 100, uiTextPrimary);
+            for(int i = 0; i < buttons.Length; i++)
+            {
+                buttons[i].draw();
+            }
             Raylib.EndDrawing();
         }
 
@@ -37,13 +45,12 @@ namespace TicTacToe
             if (Raylib.IsMouseButtonPressed(MouseButton.Left))
             {
                 Vector2 mousePosition = Raylib.GetMousePosition();
-                if (checkBounds(startButton.x, startButton.y, startButton.width, startButton.height, mousePosition))
+                for (int i = 0; i < buttons.Length; i++)
                 {
-                    startButton.onClick();
-                }
-                else if(checkBounds(settingsButton.x, settingsButton.y, settingsButton.width, settingsButton.height, mousePosition))
-                {
-                    settingsButton.onClick();
+                    if (checkBounds(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
+                    {
+                        buttons[i].onClick();
+                    }
                 }
             }
         }
