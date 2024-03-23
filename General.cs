@@ -73,8 +73,11 @@ namespace TicTacToe
 
         public static void updateBoardSize(int newBoardSizeLength)
         {
+            if (newBoardSizeLength < 3 || newBoardSizeLength > 9)
+                return;
             boardSizeLength = newBoardSizeLength;
             boardSizeSq = boardSizeLength*boardSizeLength;
+            mainBoard = new char[boardSizeSq];
         }
         
         //TODO: OPTIMISE THIS PLEASE
