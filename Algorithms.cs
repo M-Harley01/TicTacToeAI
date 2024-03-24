@@ -331,7 +331,7 @@ namespace TicTacToe
                 return 0;
 
             char[] lastBoard = node.parent.board;
-
+            int lastMove = node.action;
             char winner = getWinner(board);
             int score = 0;
             if (getNumberOfWinningMoves(lastBoard, otherPlayer(startPlayer)) > 0 && getNumberOfWinningMoves(board, otherPlayer(startPlayer))  == 0)
@@ -346,6 +346,8 @@ namespace TicTacToe
                 if (checkInARow(board, startPlayer) > 0)
                     score -= 10;
                 score += (checkInARow(board, otherPlayer(startPlayer))) * 10;
+                if ((boardSizeLength % 2) != 0 && lastMove == boardSizeSq/2 && player == startPlayer)
+                    score -= 5;
             }
             return score;
 
