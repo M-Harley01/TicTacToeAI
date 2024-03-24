@@ -278,7 +278,7 @@ namespace TicTacToe
                 } 
             }
             //If unable to win, it will play a random move.
-            Console.Write("TRY TO DRAW");
+            Console.WriteLine("TRY TO DRAW");
 
             frontier.Enqueue(new Node(null, board, -1, (startPlayer == 'X') ? 'O' : 'X'), 0);
             while (frontier.Count > 0)
@@ -294,24 +294,9 @@ namespace TicTacToe
 
                     if (!visited.Contains(childNode) /*&& !frontier*/)
                     {
-                        if (getWinner(childBoard) != otherPlayer(startPlayer))
+                        if (checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
                         {
-                            //Console.WriteLine("TEST!");
-                            //Console.WriteLine("--------");
-                            //for (int x = 0; x < Settings.boardSizeLength; x++)
-                            //{
-                            //    for (int y = 0; y < Settings.boardSizeLength; y++)
-                            //    {
-                            //        Console.Write(childBoard[flatten(x, y)] == '\0' ? ' ' : childBoard[flatten(x, y)]);
-                            //    }
-                            //    Console.WriteLine();
-                            //}
-                            //Console.WriteLine("--------");
                             return getFirstMove(childNode);
-                        }
-                        else if (checkGameOver(childBoard))
-                        {
-                            continue;
                         }
                         else
                         {
@@ -345,9 +330,9 @@ namespace TicTacToe
             {
                 if (checkInARow(board, startPlayer) > 0)
                     score -= 10;
+                else if ((boardSizeLength % 2) != 0 && lastMove == boardSizeSq/2 && player == startPlayer)
+                    score -= 10;
                 score += (checkInARow(board, otherPlayer(startPlayer))) * 10;
-                if ((boardSizeLength % 2) != 0 && lastMove == boardSizeSq/2 && player == startPlayer)
-                    score -= 5;
             }
             return score;
 

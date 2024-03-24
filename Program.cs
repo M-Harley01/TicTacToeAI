@@ -21,6 +21,14 @@ namespace TicTacToe
             Raylib.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tic Tac Toe");
             Raylib.SetTargetFPS(60);
 
+            int count = 0;
+            for(int i = 0; i < 1000; i++) { 
+                if (Tester.compareAlgorithm(Algorithms.MiniMax, Algorithms.AStarSearch, Tester.Difficulty.MEDIUM))
+                    count++;
+            }
+            double percent = (double)count / 10;
+            Console.WriteLine($"Same: {percent}% of the time!");
+
             while (!Raylib.WindowShouldClose() && !quit)
             {
                 currentScreen.draw();
