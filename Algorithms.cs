@@ -272,7 +272,7 @@ namespace TicTacToe
                         }
                         else
                         {
-                            frontier.Enqueue(childNode, heuristic(childNode, player, startPlayer));
+                            frontier.Enqueue(childNode, getDepth(childNode) + heuristic(childNode, player, startPlayer)*10);
                         }
                     }
                 } 
@@ -300,7 +300,7 @@ namespace TicTacToe
                         }
                         else
                         {
-                            frontier.Enqueue(childNode,  heuristic(childNode, player, startPlayer));
+                            frontier.Enqueue(childNode,  getDepth(childNode) + heuristic(childNode, player, startPlayer)*10);
                         }
                     }
                 }
@@ -328,30 +328,17 @@ namespace TicTacToe
             }
             else
             {
-                if (checkInARow(board, startPlayer) > 0)
+                if (getNumberOfWinningMoves(board, startPlayer) > 0)
                     score -= 10;
                 else if ((boardSizeLength % 2) != 0 && lastMove == boardSizeSq/2 && player == startPlayer)
                     score -= 10;
-                score += (checkInARow(board, otherPlayer(startPlayer))) * 10;
+                score += (getNumberOfWinningMoves(board, otherPlayer(startPlayer))) * 10;
             }
             return score;
 
         }
 
-        public static int getNumberOfWinningMoves(char[] board, char player) 
-        { 
-            int count = 0;
-            foreach (int action in findActions(board))
-            {
-                char[] boardCopy = (char[])board.Clone();
-                boardCopy[action] = player;
-                if (getWinner(boardCopy) == player)
-                    count++;
-            }
-            return count;
-        }
-
-        public static int checkInARow(char[] board, char player)
+        public static int getNumberOfWinningMoves(char[] board, char player)
         {
             int potentialWin = 0;
             for (int i = 0; i < 2; i++)
