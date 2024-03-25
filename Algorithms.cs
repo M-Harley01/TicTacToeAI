@@ -17,7 +17,7 @@ namespace TicTacToe
 
         //Pros: Can win.
         //Cons: Only tries to win, doesn't try to not lose. Would rather attempt a risky win than draw.
-        public static int BreadthFirst(char[] board, char player)
+        public static int BreadthFirst(char[] board, char player, bool canWin)
         {
             char startPlayer = player;
             Queue<Node> frontier = new Queue<Node>();
@@ -39,14 +39,10 @@ namespace TicTacToe
                     {
                         if (getWinner(childBoard) == startPlayer)
                         {
-                            //for (int x = 0; x < Settings.boardSizeLength; x++)
-                            //{
-                            //    for (int y = 0; y < Settings.boardSizeLength; y++)
-                            //    {
-                            //        Console.Write(childBoard[flatten(x, y)]);
-                            //    }
-                            //    Console.WriteLine();
-                            //}
+                            return getFirstMove(childNode);
+                        }
+                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
+                        {
                             return getFirstMove(childNode);
                         }
                         else if(checkGameOver(childBoard))
@@ -61,11 +57,10 @@ namespace TicTacToe
                 }
 
             }
-            //If unable to win, it will play a random move.
-            return randomMove(board, player);
+            return -1;
         }
 
-        public static int BreadthFirst_HashQueue(char[] board, char player)
+        public static int BreadthFirst_HashQueue(char[] board, char player, bool canWin)
         {
             char startPlayer = player;
             HashQueue<Node> frontier = new HashQueue<Node>();
@@ -87,14 +82,10 @@ namespace TicTacToe
                     {
                         if (getWinner(childBoard) == startPlayer)
                         {
-                            //for (int x = 0; x < Settings.boardSizeLength; x++)
-                            //{
-                            //    for (int y = 0; y < Settings.boardSizeLength; y++)
-                            //    {
-                            //        Console.Write(childBoard[flatten(x, y)]);
-                            //    }
-                            //    Console.WriteLine();
-                            //}
+                            return getFirstMove(childNode);
+                        }
+                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
+                        {
                             return getFirstMove(childNode);
                         }
                         else if (checkGameOver(childBoard))
@@ -109,12 +100,11 @@ namespace TicTacToe
                 }
 
             }
-            //If unable to win, it will play a random move.
-            return randomMove(board, player);
+            return -1;
         }
 
         //Same problem as with breadthFirst search, they look for just one winning move, can't find the best one as they don't rank all moves
-        public static int DepthFirstSearch(char[] board, char player)
+        public static int DepthFirstSearch(char[] board, char player, bool canWin)
         {
             char startPlayer = player;
             Stack<Node> frontier = new Stack<Node>();
@@ -136,16 +126,10 @@ namespace TicTacToe
                     {
                         if (getWinner(childBoard) == startPlayer)
                         {
-                            Console.WriteLine("--------");
-                            for (int x = 0; x < Settings.boardSizeLength; x++)
-                            {
-                                for (int y = 0; y < Settings.boardSizeLength; y++)
-                                {
-                                    Console.Write(childBoard[flatten(x, y)]);
-                                }
-                                Console.WriteLine();
-                            }
-                            Console.WriteLine("--------");
+                            return getFirstMove(childNode);
+                        }
+                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
+                        {
                             return getFirstMove(childNode);
                         }
                         else if (checkGameOver(childBoard))
@@ -161,9 +145,9 @@ namespace TicTacToe
 
             }
             //If unable to win, it will play a random move.
-            return randomMove(board, player);
+            return -1;
         }
-        public static int IterativeDeepeningDepthFirstSearch(char[] board, char player)
+        public static int IterativeDeepeningDepthFirstSearch(char[] board, char player, bool canWin)
         {
             char startPlayer = player;
             Stack<Node> frontier = new Stack<Node>();
@@ -202,16 +186,10 @@ namespace TicTacToe
                     {
                         if (getWinner(childBoard) == startPlayer)
                         {
-                            Console.WriteLine("--------");
-                            for (int x = 0; x < Settings.boardSizeLength; x++)
-                            {
-                                for (int y = 0; y < Settings.boardSizeLength; y++)
-                                {
-                                    Console.Write(childBoard[flatten(x, y)]);
-                                }
-                                Console.WriteLine();
-                            }
-                            Console.WriteLine("--------");
+                            return getFirstMove(childNode);
+                        }
+                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
+                        {
                             return getFirstMove(childNode);
                         }
                         else if (checkGameOver(childBoard))
@@ -226,12 +204,10 @@ namespace TicTacToe
                 }
 
             }
-            //If unable to win, it will play a random move.
-            Console.Write("RANDOM MOVE!!");
-            return randomMove(board, player);
+            return -1;
         }
         
-        public static int AStarSearch(char[] board, char player)
+        public static int AStarSearch(char[] board, char player, bool canWin)
         {   
             char startPlayer = player;
             PriorityQueue<Node, int> frontier = new PriorityQueue<Node,int>();
@@ -253,17 +229,10 @@ namespace TicTacToe
                     {
                         if (getWinner(childBoard) == startPlayer)
                         {
-                            //Console.WriteLine("TEST!");
-                            //Console.WriteLine("--------");
-                            //for (int x = 0; x < Settings.boardSizeLength; x++)
-                            //{
-                            //    for (int y = 0; y < Settings.boardSizeLength; y++)
-                            //    {
-                            //        Console.Write(childBoard[flatten(x, y)] == '\0'? ' ' : childBoard[flatten(x,y)]);
-                            //    }
-                            //    Console.WriteLine();
-                            //}
-                            //Console.WriteLine("--------");
+                            return getFirstMove(childNode);
+                        }
+                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
+                        {
                             return getFirstMove(childNode);
                         }
                         else if (checkGameOver(childBoard))
@@ -277,36 +246,7 @@ namespace TicTacToe
                     }
                 } 
             }
-            //If unable to win, it will play a random move.
-            Console.WriteLine("TRY TO DRAW");
-
-            frontier.Enqueue(new Node(null, board, -1, (startPlayer == 'X') ? 'O' : 'X'), 0);
-            while (frontier.Count > 0)
-            {
-                Node currentNode = frontier.Dequeue();
-                visited.Add(currentNode);
-                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
-                foreach (int action in findActions(currentNode.board))
-                {
-                    char[] childBoard = (char[])currentNode.board.Clone();
-                    childBoard[action] = player;
-                    Node childNode = new Node(currentNode, childBoard, action, player);
-
-                    if (!visited.Contains(childNode) /*&& !frontier*/)
-                    {
-                        if (checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
-                        {
-                            return getFirstMove(childNode);
-                        }
-                        else
-                        {
-                            frontier.Enqueue(childNode,  getDepth(childNode) + heuristic(childNode, player, startPlayer)*10);
-                        }
-                    }
-                }
-            }
-
-            return randomMove(board, player);
+            return -1;
         }
 
         private static int heuristic(Node node, char player, char startPlayer)
@@ -461,7 +401,7 @@ namespace TicTacToe
         }
 
         //Explores all the nodes in a depth first search, takes a long time but does give optimal move.
-        public static int MiniMax(char[] board, char player)
+        public static int MiniMax(char[] board, char player, bool canWin)
         {
             int maxScore = int.MinValue;
             int index = -1;

@@ -10,7 +10,14 @@ namespace TicTacToe
         static void aiTurn()
         {
             stopwatch.Restart();
-            mainBoard[searchAlgorithm.Invoke(mainBoard, aiPlayer)] = currentPlayer;
+            int action = searchAlgorithm.Invoke(mainBoard, aiPlayer, true);
+            if(action == -1) {
+                action = searchAlgorithm.Invoke(mainBoard, aiPlayer, false);
+            }
+            if (action == -1) {
+                action = Algorithms.randomMove(mainBoard, aiPlayer);
+            }
+            mainBoard[action] = currentPlayer;
             timeTaken = stopwatch.ElapsedMilliseconds;
             gameOver = checkGameOver(mainBoard);
             nextTurn();
