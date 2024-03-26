@@ -26,10 +26,7 @@ namespace TicTacToe
             this.action = action;
         }
 
-        public void onClick()
-        {
-            action.Invoke();
-        }
+        public void onClick() => action.Invoke();
 
         public void draw()
         {

@@ -47,7 +47,7 @@ namespace TicTacToe
                 Vector2 mousePosition = Raylib.GetMousePosition();
                 for (int i = 0; i < buttons.Length; i++)
                 {
-                    if (checkBounds(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
+                    if (mouseInRect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
                     {
                         buttons[i].onClick();
                     }

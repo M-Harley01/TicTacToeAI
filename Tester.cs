@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static TicTacToe.Algorithms;
+﻿using System.Diagnostics;
 using static TicTacToe.General;
 
 namespace TicTacToe
 {
-    public class Tester
+    public static class Tester
     {
-
         public enum Difficulty
         {
             EMPTY,
@@ -73,9 +66,6 @@ namespace TicTacToe
         public static bool compareAlgorithm(Func<char[], char, int> algorithm1, Func<char[], char, int> algorithm2, Difficulty difficulty)
         {
             char[] board = randomBoard(getHowManyToFill(difficulty));
-            
-            
-            
             return algorithm1.Invoke(board, 'X') == algorithm2.Invoke(board, 'X');
         }
 

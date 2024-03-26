@@ -12,36 +12,30 @@ namespace TicTacToe
 {
     public static class General
     {
+        public static Func<char[], char, bool, int>[] algorithms = [Algorithms.BreadthFirst, Algorithms.DepthFirstSearch, Algorithms.IterativeDeepeningDepthFirstSearch, Algorithms.AStarSearch, Algorithms.MiniMax]; 
+        public static Func<char[], char, bool, int> searchAlgorithm = algorithms[0];
+
         public static char currentPlayer = manualPlayer;
         public static char[] mainBoard = new char[boardSizeSq];
-        public static bool gameOver = false;
-        public static Func<char[], char, bool, int>[] algorithms = new Func<char[], char, bool, int>[] {Algorithms.BreadthFirst, Algorithms.DepthFirstSearch, Algorithms.IterativeDeepeningDepthFirstSearch, Algorithms.AStarSearch, Algorithms.MiniMax }; 
-        public static Func<char[], char, bool, int> searchAlgorithm = algorithms[0];
-        public static long timeTaken = 0;
-        public static Stopwatch stopwatch = new Stopwatch();
-        public static Random rng = new Random();
-        public static int randomMovesTaken = 0;
-        public static IScreen currentScreen = new MenuScreen();
-        public static bool quit = false;
-        public static List<int> winningPlaces = new List<int>();
+
         public static char winner = '\0';
+        public static List<int> winningPlaces = new List<int>();
+
+        public static bool gameOver = false;
+        public static bool quit = false;
+
+        public static Stopwatch stopwatch = new Stopwatch();
+        public static long timeTakenForAction = 0;
+
+        public static Random rng = new Random();
+
+        public static IScreen currentScreen = new MenuScreen();
 
         public static char otherPlayer(char player) => player == 'X' ? 'O' : 'X';
 
-        public static int flatten(int x, int y)
-        {
-            return x + y * boardSizeLength;
-        }
+        public static int flatten(int x, int y) => x + y * boardSizeLength;
 
-        public static Tuple<int, int> deFlatten(int f)
-        {
-            return new Tuple<int, int>(f % boardSizeLength, f / boardSizeLength);
-        }
-
-        public static void nextTurn()
-        {
-            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
-        }
+        public static void nextTurn() => currentPlayer = otherPlayer(currentPlayer);
 
         public static void resetBoard(char[] board)
         {
@@ -53,15 +47,18 @@ namespace TicTacToe
 
         public static bool checkGameOver(char[] board)
         {
-            if(winner != '\0' || gameOver == true)
+            if(winner != '\0' || gameOver)
                 return true;        
+
             if (getWinner(board, false) != '\0')
                 return true;
+
             for (int i = 0; i < boardSizeSq; i++)
             {
                 if (board[i] == '\0')
                     return false;
             }
+
             return true;
         }
 
@@ -84,7 +81,10 @@ namespace TicTacToe
             boardSizeSq = boardSizeLength*boardSizeLength;
             mainBoard = new char[boardSizeSq];
         }
-        
+
+        public static bool mouseInRect(int x, int y, int width, int height, Vector2 mouse) => !(mouse.X < x || mouse.X > width + x || mouse.Y < y || mouse.Y > y + height);
+
+        //TODO: MAKE BETTER
         public static char getWinner(char[] board, bool highlightWinner)
         {
             char checking = 'X';
@@ -106,7 +106,7 @@ namespace TicTacToe
                             foundAcross++;
                     }
 
-                    if (foundDown == boardSizeLength )
+                    if (foundDown == boardSizeLength)
                     {
                         if (!highlightWinner)
                             return checking;
@@ -149,7 +149,7 @@ namespace TicTacToe
 
                 if (foundDiagonal2 == boardSizeLength)
                 {
-                    if(!highlightWinner)
+                    if (!highlightWinner)
                         return checking;
 
                     for (int k = 0; k < boardSizeLength; k++)
@@ -162,20 +162,6 @@ namespace TicTacToe
                 checking = 'O';
             }
             return '\0';
-        }
-
-        public static bool checkBounds(int x, int y, int width, int height, Vector2 mouse)
-        {
-            if (mouse.X < x || mouse.X > width + x || mouse.Y < y || mouse.Y > y + height)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public static bool checkBounds(Rectangle rectangle, Vector2 mouse)
-        {
-            return checkBounds((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height, mouse);
         }
 
     }

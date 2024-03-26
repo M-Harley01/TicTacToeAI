@@ -12,15 +12,19 @@ namespace TicTacToe
 {
     public class GameScreen : IScreen
     {
-        private const int TILES_PANEL_START = SCREEN_WIDTH / 4;
-        private const int TILES_PANEL_END = (SCREEN_WIDTH / 4) * 3;
+        private const int TILES_START_X = SCREEN_WIDTH / 4;
         private const int TILES_START_Y = SCREEN_HEIGHT / 8;
+
+        private const int TILES_END_X = (SCREEN_WIDTH / 4) * 3;
         private const int TILES_END_Y = (SCREEN_HEIGHT / 8) * 7;
+
         private const int TILE_GAP = 10;
+
         private static Tile[] tiles = new Tile[boardSizeSq];
-        private static DropDown dropDownMenu = new DropDown(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
+        private static DropDown dropDownMenu = new DropDown(TILES_END_X + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
+        
         private static Button[] buttons = [
-            new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Reset", () =>
+            new Button(TILES_END_X + SCREEN_WIDTH / 8 - 150, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Reset", () =>
             {
                 mainBoard = new char[boardSizeSq];
                 gameOver = false;
@@ -28,7 +32,7 @@ namespace TicTacToe
                 winningPlaces.Clear();
                 winner = '\0';
             }),
-            new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y-150, 300, SCREEN_HEIGHT / 8, "Swap", () =>
+            new Button(TILES_END_X + SCREEN_WIDTH / 8 - 150, TILES_END_Y-150, 300, SCREEN_HEIGHT / 8, "Swap", () =>
             {
                 aiPlayer = otherPlayer(aiPlayer);
                 manualPlayer = otherPlayer(manualPlayer);
@@ -48,16 +52,13 @@ namespace TicTacToe
             currentPlayer = manualPlayer;
         }
 
-        private static int tileSize()
-        {
-            return ((SCREEN_HEIGHT / 4) * 3 - TILE_GAP * boardSizeLength) / boardSizeLength;
-        }
+        private static int tileSize() => ((SCREEN_HEIGHT / 4) * 3 - TILE_GAP * boardSizeLength) / boardSizeLength;
 
         private static int centreX()
         {
-            int totalX = (TILE_GAP + tileSize()) * boardSizeLength - TILE_GAP;
-            int area = TILES_PANEL_END - TILES_PANEL_START;
-            return TILES_PANEL_START + (area - totalX) / 2;
+            int totalWidth = (TILE_GAP + tileSize()) * boardSizeLength - TILE_GAP;
+            int areaAvailable = TILES_END_X - TILES_START_X;
+            return TILES_START_X + (areaAvailable - totalWidth) / 2;
         }
 
         public static void generateTiles()
@@ -78,23 +79,17 @@ namespace TicTacToe
             Raylib.ClearBackground(background);
 
             dropDownMenu.draw();
-            Raylib.DrawText("Select an algorithm", TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 15, 30, Color.White);
 
+            Raylib.DrawText("Select an algorithm", TILES_END_X + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 15, 30, Color.White);
             Raylib.DrawText("Using: " + searchAlgorithm.Method.Name, 0, 0, 60, Color.White);
-
-            //Raylib.DrawRectangle(0, 0, TILES_PANEL_START, SCREEN_HEIGHT, Color.Red);
-            //Raylib.DrawRectangle(TILES_PANEL_END, 0, SCREEN_WIDTH - TILES_PANEL_END, SCREEN_HEIGHT, Color.Green);
-            //Raylib.DrawRectangle(0, 0, SCREEN_WIDTH, TILES_START_Y, Color.Blue);
-            //Raylib.DrawRectangle(0, TILES_END_Y, SCREEN_WIDTH, SCREEN_HEIGHT - TILES_END_Y, Color.Yellow);
+            Raylib.DrawText("Last Action Took: " + timeTakenForAction + "ms", 0, 60, 30, Color.White);
+            Raylib.DrawText($"Manual Player: {manualPlayer}", 0, 90, 30, Color.White);
+            Raylib.DrawText($"Ai Player: {aiPlayer}", 0, 120, 30, Color.White);
 
             for (int i = 0; i < boardSizeSq; i++)
             {
                 tiles[i].Draw(tileSize());
             }
-
-            Raylib.DrawText("Last Move Took: " + timeTaken + "ms", 0, 60, 30, Color.White);
-            Raylib.DrawText($"Manual Player: {manualPlayer}", 0, 90, 30, Color.White);
-            Raylib.DrawText($"Ai Player: {aiPlayer}", 0, 120, 30, Color.White);
 
             if (gameOver)
             {
@@ -121,7 +116,7 @@ namespace TicTacToe
 
                 foreach (Tile tile in tiles)
                 {
-                    if (checkBounds(tile.x, tile.y, tile.width, tile.height, mousePosition))
+                    if (mouseInRect(tile.x, tile.y, tile.width, tile.height, mousePosition))
                     {
                         tile.onClick();
                     }
@@ -129,13 +124,13 @@ namespace TicTacToe
 
                 for (int i = 0; i < buttons.Length; i++)
                 {
-                    if (checkBounds(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
+                    if (mouseInRect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
                     {
                         buttons[i].onClick();
                     }
                 }
 
-                if (checkBounds(dropDownMenu.x, dropDownMenu.y, dropDownMenu.width, dropDownMenu.getHeight(), mousePosition))
+                if (mouseInRect(dropDownMenu.x, dropDownMenu.y, dropDownMenu.width, dropDownMenu.getHeight(), mousePosition))
                 {
                     dropDownMenu.onClick(mousePosition);
                 }

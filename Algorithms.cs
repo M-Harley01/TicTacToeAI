@@ -15,8 +15,6 @@ namespace TicTacToe
     public static class Algorithms
     {
 
-        //Pros: Can win.
-        //Cons: Only tries to win, doesn't try to not lose. Would rather attempt a risky win than draw.
         public static int BreadthFirst(char[] board, char player, bool canWin)
         {
             char startPlayer = player;
@@ -60,7 +58,7 @@ namespace TicTacToe
             return -1;
         }
 
-        //Same problem as with breadthFirst search, they look for just one winning move, can't find the best one as they don't rank all moves
+
         public static int DepthFirstSearch(char[] board, char player, bool canWin)
         {
             char startPlayer = player;
@@ -101,7 +99,6 @@ namespace TicTacToe
                 }
 
             }
-            //If unable to win, it will play a random move.
             return -1;
         }
         public static int IterativeDeepeningDepthFirstSearch(char[] board, char player, bool canWin)
@@ -181,7 +178,7 @@ namespace TicTacToe
                     childBoard[action] = player;
                     Node childNode = new Node(currentNode, childBoard, action, player);
 
-                    if (!visited.Contains(childNode) /*&& !frontier*/)
+                    if (!visited.Contains(childNode))
                     {
                         if (getWinner(childBoard, false) == startPlayer)
                         {
@@ -213,12 +210,13 @@ namespace TicTacToe
 
             char[] lastBoard = node.parent.board;
             int lastMove = node.action;
-            char winner = getWinner(board, false);
             int score = 0;
-            if (getNumberOfWinningMoves(lastBoard, otherPlayer(startPlayer)) > 0 && getNumberOfWinningMoves(board, otherPlayer(startPlayer))  == 0)
+
+            if (getNumberOfWinningMoves(lastBoard, otherPlayer(startPlayer)) > 0 && getNumberOfWinningMoves(board, otherPlayer(startPlayer)) == 0)
             {
                 score = -100;
-            } else if (getNumberOfWinningMoves(lastBoard, otherPlayer(startPlayer)) > 0)
+            }
+            else if (getNumberOfWinningMoves(lastBoard, otherPlayer(startPlayer)) > 0)
             {
                 score = 100;
             }
@@ -226,8 +224,9 @@ namespace TicTacToe
             {
                 if (getNumberOfWinningMoves(board, startPlayer) > 0)
                     score -= 10;
-                else if ((boardSizeLength % 2) != 0 && lastMove == boardSizeSq/2 && player == startPlayer)
+                else if ((boardSizeLength % 2) != 0 && lastMove == boardSizeSq / 2 && player == startPlayer)
                     score -= 10;
+
                 score += (getNumberOfWinningMoves(board, otherPlayer(startPlayer))) * 10;
             }
             return score;
@@ -236,61 +235,62 @@ namespace TicTacToe
 
         public static int getNumberOfWinningMoves(char[] board, char player)
         {
-            int potentialWin = 0;
+            int winningMoves = 0;
             for (int i = 0; i < 2; i++)
             {
 
-                int foundDiagonal1 = 0;
-                bool foundDiagonal1Empty = true;
-                int foundDiagonal2 = 0;
-                bool foundDiagonal2Empty = true;
+                int inADiagonal1 = 0;
+                bool diagonal1Empty = true;
+                int inADiagonal2 = 0;
+                bool diagonal2Empty = true;
 
                 for (int x = 0; x < boardSizeLength; x++)
                 {
-                    int foundDown = 0;
-                    bool foundDownEmpty = true;
-                    int foundAcross = 0;
-                    bool foundAcrossEmpty = true;
+                    int inAColumn = 0;
+                    bool columnEmpty = true;
+                    int inARow = 0;
+                    bool rowEmpty = true;
+
                     for (int y = 0; y < boardSizeLength; y++)
                     {
                         if (board[flatten(x, y)] == player)
-                            foundDown++;
+                            inAColumn++;
                         else if (board[flatten(x, y)] == otherPlayer(player))
-                            foundDownEmpty = false;
+                            columnEmpty = false;
+
                         if (board[flatten(y, x)] == player)
-                            foundAcross++;
+                            inARow++;
                         else if(board[flatten(y, x)] == otherPlayer(player))
-                            foundAcrossEmpty = false;
+                            rowEmpty = false;
                     }
-                    if (foundDown == 2 && foundDownEmpty)
-                    {
-                        potentialWin += 1;
-                    }
-                    if (foundAcross == 2 && foundAcrossEmpty)
-                    {
-                        potentialWin +=1;
-                    }
+
+                    if (inAColumn == 2 && columnEmpty)
+                        winningMoves++;
+                    
+                    if (inARow == 2 && rowEmpty)
+                        winningMoves++;
+                    
 
                     if (board[flatten(x, x)] == player)
-                        foundDiagonal1++;
+                        inADiagonal1++;
                     else if (board[flatten(x, x)] == otherPlayer(player))
-                        foundDiagonal1Empty = false;
+                        diagonal1Empty = false;
+
                     if (board[flatten((boardSizeLength - 1) - x, x)] == player)
-                        foundDiagonal2++;
+                        inADiagonal2++;
                     else if (board[flatten((boardSizeLength - 1) - x, x)] == otherPlayer(player))
-                        foundDiagonal2Empty = false;
-                }
-                if (foundDiagonal1 == 2 && foundDiagonal1Empty)
-                {
-                    potentialWin +=1;
-                }
-                if (foundDiagonal2 == 2 && foundDiagonal2Empty)
-                {
-                    potentialWin +=1;
+                        diagonal2Empty = false;
+
                 }
 
+                if (inADiagonal1 == 2 && diagonal1Empty)
+                    winningMoves++;
+
+                if (inADiagonal2 == 2 && diagonal2Empty)
+                    winningMoves++;
+
             }
-            return potentialWin;
+            return winningMoves;
         }
         private static int getFirstAction(Node childNode)
         {
@@ -356,7 +356,6 @@ namespace TicTacToe
             return score;
         }
 
-        //Explores all the nodes in a depth first search, takes a long time but does give optimal move.
         public static int MiniMax(char[] board, char player, bool canWin)
         {
             int maxScore = int.MinValue;
@@ -376,14 +375,13 @@ namespace TicTacToe
             return actions[index];
         }
 
-        public static int randomAction(char[] board, char player)
+        public static int randomAction(char[] board)
         {
             int pos = rng.Next(boardSizeSq);
+
             while (board[pos] != '\0')
-            {
                 pos = rng.Next(boardSizeSq);
-            }
-            randomMovesTaken++;
+            
             return pos;
         }
     }

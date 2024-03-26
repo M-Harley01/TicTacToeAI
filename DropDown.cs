@@ -6,31 +6,20 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using static TicTacToe.Settings;
+using static TicTacToe.General;
 
 namespace TicTacToe
 {
-    public class DropDown
+    public class DropDown(int x, int y, int width, int height, string[] options)
     {
-        public int x;
-        public int y;
-        public int width;
-        public int height;
-        int totalHeight;
-        string[] options;
-        int selected;
-        bool open;
-
-        public DropDown(int x, int y, int width, int height, string[] options)
-        {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.options = options;
-            this.selected = 0;
-            this.totalHeight = height * (options.Length + 1);
-            this.open = false;
-        }
+        public int x = x;
+        public int y = y;
+        public int width = width;
+        public int height = height;
+        int totalHeight = height * (options.Length + 1);
+        string[] options = options;
+        int selected = 0;
+        bool open = false;
 
         public void draw()
         {
@@ -47,14 +36,10 @@ namespace TicTacToe
             }
         }
 
-        public int getHeight()
-        {
-            return open? totalHeight : height;
-        }
+        public int getHeight() => open ? totalHeight : height;
 
         public void onClick(Vector2 mousePos)
         {
-            int x = (int)mousePos.X;
             int y = (int)mousePos.Y;
 
             for(int i = 0; i <= options.Length;i++)
@@ -67,7 +52,7 @@ namespace TicTacToe
                     {
                         open = false;
                         selected = i - 1;
-                        General.searchAlgorithm = General.algorithms[selected];
+                        searchAlgorithm = algorithms[selected];
                     }
                 }
             }
