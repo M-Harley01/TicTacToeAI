@@ -30,15 +30,17 @@ namespace TicTacToe
             if (mainBoard[index] != '\0' || gameOver)
                 return;
             mainBoard[index] = currentPlayer;
-            nextTurn();
             gameOver = checkGameOver(mainBoard);
+            if(gameOver)
+                winner = getWinner(mainBoard, true);
+            nextTurn();
         }
 
         public void Draw(int size)
         {
-            Raylib.DrawRectangle(x, y, width, height, Settings.uiPrimary);
+            Raylib.DrawRectangle(x, y, width, height, winningPlaces.Contains(index) ? Settings.uiHighlighted : Settings.uiPrimary);
             string text = mainBoard[index].ToString();
-            Raylib.DrawText(text, x + Raylib.MeasureText(text, (size * 3) / 4)/2, y + size/8,(size*3)/4,Color.Black);
+            Raylib.DrawText(text, x + Raylib.MeasureText(text, (size * 3) / 4)/2, y + size/8,(size*3)/4, Settings.uiTextSecondary);
         }
     }
 }

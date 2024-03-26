@@ -23,6 +23,8 @@ namespace TicTacToe
         public static int randomMovesTaken = 0;
         public static IScreen currentScreen = new MenuScreen();
         public static bool quit = false;
+        public static List<int> winningPlaces = new List<int>();
+        public static char winner = '\0';
 
         public static char otherPlayer(char player) => player == 'X' ? 'O' : 'X';
 
@@ -51,7 +53,9 @@ namespace TicTacToe
 
         public static bool checkGameOver(char[] board)
         {
-            if (getWinner(board) != '\0')
+            if(winner != '\0' || gameOver == true)
+                return true;        
+            if (getWinner(board, false) != '\0')
                 return true;
             for (int i = 0; i < boardSizeSq; i++)
             {
@@ -81,8 +85,7 @@ namespace TicTacToe
             mainBoard = new char[boardSizeSq];
         }
         
-        //TODO: OPTIMISE THIS PLEASE
-        public static char getWinner(char[] board)
+        public static char getWinner(char[] board, bool highlightWinner)
         {
             char checking = 'X';
             for (int i = 0; i < 2; i++)
@@ -103,8 +106,28 @@ namespace TicTacToe
                             foundAcross++;
                     }
 
-                    if (foundDown == boardSizeLength || foundAcross == boardSizeLength)
+                    if (foundDown == boardSizeLength )
+                    {
+                        if (!highlightWinner)
+                            return checking;
+
+                        for (int k = 0; k < boardSizeLength; k++)
+                        {
+                            winningPlaces.Add(flatten(x, k));
+                        }
                         return checking;
+                    }
+                    if (foundAcross == boardSizeLength)
+                    {
+                        if (!highlightWinner)
+                            return checking;
+
+                        for (int k = 0; k < boardSizeLength; k++)
+                        {
+                            winningPlaces.Add(flatten(k, x));
+                        }
+                        return checking;
+                    }
 
                     if (board[flatten(x, x)] == checking)
                         foundDiagonal1++;
@@ -112,8 +135,29 @@ namespace TicTacToe
                         foundDiagonal2++;
                 }
 
-                if (foundDiagonal1 == boardSizeLength || foundDiagonal2 == boardSizeLength)
+                if (foundDiagonal1 == boardSizeLength)
+                {
+                    if (!highlightWinner)
+                        return checking;
+
+                    for (int k = 0; k < boardSizeLength; k++)
+                    {
+                        winningPlaces.Add(flatten(k, k));
+                    }
                     return checking;
+                }
+
+                if (foundDiagonal2 == boardSizeLength)
+                {
+                    if(!highlightWinner)
+                        return checking;
+
+                    for (int k = 0; k < boardSizeLength; k++)
+                    {
+                        winningPlaces.Add(flatten((boardSizeLength - 1) - k, k));
+                    }
+                    return checking;
+                }
 
                 checking = 'O';
             }

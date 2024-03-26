@@ -15,11 +15,15 @@ namespace TicTacToe
                 action = searchAlgorithm.Invoke(mainBoard, aiPlayer, false);
             }
             if (action == -1) {
-                action = Algorithms.randomMove(mainBoard, aiPlayer);
+                action = Algorithms.randomAction(mainBoard, aiPlayer);
             }
             mainBoard[action] = currentPlayer;
             timeTaken = stopwatch.ElapsedMilliseconds;
             gameOver = checkGameOver(mainBoard);
+            if(gameOver)
+            {
+                winner = getWinner(mainBoard, true);
+            }
             nextTurn();
         }
 

@@ -25,6 +25,8 @@ namespace TicTacToe
                 mainBoard = new char[boardSizeSq];
                 gameOver = false;
                 currentPlayer = manualPlayer;
+                winningPlaces.Clear();
+                winner = '\0';
             }),
             new Button(TILES_PANEL_END + SCREEN_WIDTH / 8 - 150, TILES_END_Y-150, 300, SCREEN_HEIGHT / 8, "Swap", () =>
             {
@@ -33,7 +35,7 @@ namespace TicTacToe
             }),
             new Button(50, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Back", () =>
             {
-            currentScreen = new MenuScreen();
+                currentScreen = new MenuScreen();
             })
         ];
 
@@ -97,6 +99,12 @@ namespace TicTacToe
             if (gameOver)
             {
                 Raylib.DrawText("Game over", 0, 150, 30, Color.White);
+                string winnerText = "Draw";
+                if(winner!='\0')
+                {
+                    winnerText = $"Winner: {winner}";
+                }
+                Raylib.DrawText(winnerText, (SCREEN_WIDTH - Raylib.MeasureText(winnerText,100))/2, SCREEN_HEIGHT - 100, 100, uiPrimary);
             }
             for (int i = 0; i < buttons.Length; i++)
             {

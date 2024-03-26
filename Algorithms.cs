@@ -20,58 +20,15 @@ namespace TicTacToe
         public static int BreadthFirst(char[] board, char player, bool canWin)
         {
             char startPlayer = player;
-            Queue<Node> frontier = new Queue<Node>();
-            HashSet<Node> visited = new HashSet<Node>();
-        
-            frontier.Enqueue(new Node(null, board, -1, (startPlayer == 'X')? 'O' : 'X' ));
-            while (frontier.Count > 0)
-            {
-                Node currentNode = frontier.Dequeue();
-                visited.Add(currentNode);
-                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
-                foreach (int action in findActions(currentNode.board))
-                {
-                    char[] childBoard = (char[])currentNode.board.Clone();
-                    childBoard[action] = player;
-                    Node childNode = new Node(currentNode, childBoard, action, player);
-        
-                    if (!visited.Contains(childNode) && !frontier.Contains(childNode))
-                    {
-                        if (getWinner(childBoard) == startPlayer)
-                        {
-                            return getFirstMove(childNode);
-                        }
-                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
-                        {
-                            return getFirstMove(childNode);
-                        }
-                        else if(checkGameOver(childBoard))
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            frontier.Enqueue(childNode);
-                        }
-                    }
-                }
-
-            }
-            return -1;
-        }
-
-        public static int BreadthFirst_HashQueue(char[] board, char player, bool canWin)
-        {
-            char startPlayer = player;
             HashQueue<Node> frontier = new HashQueue<Node>();
             HashSet<Node> visited = new HashSet<Node>();
 
-            frontier.Enqueue(new Node(null, board, -1, (startPlayer == 'X') ? 'O' : 'X'));
+            frontier.Enqueue(new Node(null, board, -1, otherPlayer(startPlayer)));
             while (frontier.Count > 0)
             {
                 Node currentNode = frontier.Dequeue();
                 visited.Add(currentNode);
-                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
+                player = otherPlayer(currentNode.lastPlayed);
                 foreach (int action in findActions(currentNode.board))
                 {
                     char[] childBoard = (char[])currentNode.board.Clone();
@@ -80,13 +37,13 @@ namespace TicTacToe
 
                     if (!visited.Contains(childNode) && !frontier.Contains(childNode))
                     {
-                        if (getWinner(childBoard) == startPlayer)
+                        if (getWinner(childBoard, false) == startPlayer)
                         {
-                            return getFirstMove(childNode);
+                            return getFirstAction(childNode);
                         }
-                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
+                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard, false) != otherPlayer(startPlayer))
                         {
-                            return getFirstMove(childNode);
+                            return getFirstAction(childNode);
                         }
                         else if (checkGameOver(childBoard))
                         {
@@ -110,12 +67,12 @@ namespace TicTacToe
             Stack<Node> frontier = new Stack<Node>();
             HashSet<Node> visited = new HashSet<Node>();
 
-            frontier.Push(new Node(null, board, -1, (startPlayer == 'X') ? 'O' : 'X'));
+            frontier.Push(new Node(null, board, -1, otherPlayer(startPlayer)));
             while (frontier.Count > 0)
             {
                 Node currentNode = frontier.Pop();
                 visited.Add(currentNode);
-                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
+                player = otherPlayer(currentNode.lastPlayed);
                 foreach (int action in findActions(currentNode.board))
                 {
                     char[] childBoard = (char[])currentNode.board.Clone();
@@ -124,13 +81,13 @@ namespace TicTacToe
 
                     if (!visited.Contains(childNode) && !frontier.Contains(childNode))
                     {
-                        if (getWinner(childBoard) == startPlayer)
+                        if (getWinner(childBoard, false) == startPlayer)
                         {
-                            return getFirstMove(childNode);
+                            return getFirstAction(childNode);
                         }
-                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
+                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard, false) != otherPlayer(startPlayer))
                         {
-                            return getFirstMove(childNode);
+                            return getFirstAction(childNode);
                         }
                         else if (checkGameOver(childBoard))
                         {
@@ -151,31 +108,30 @@ namespace TicTacToe
         {
             char startPlayer = player;
             Stack<Node> frontier = new Stack<Node>();
-            Stack<Node> temporaryHolder = new Stack<Node>();
+            Stack<Node> tooDeepStack = new Stack<Node>();
             HashSet<Node> visited = new HashSet<Node>();
 
-            frontier.Push(new Node(null, board, -1, (startPlayer == 'X') ? 'O' : 'X'));
+            frontier.Push(new Node(null, board, -1, otherPlayer(startPlayer)));
             int maxDepth = 2;
 
-            while (frontier.Count > 0 || temporaryHolder.Count > 0)
+            while (frontier.Count > 0 || tooDeepStack.Count > 0)
             {
                 Node currentNode = frontier.Pop();
                 while(getDepth(currentNode) > maxDepth)
                 {
-                    temporaryHolder.Push(currentNode);
+                    tooDeepStack.Push(currentNode);
 
                     if(frontier.Count == 0) { 
-                        Stack<Node> temp = new Stack<Node>();
-                        temp = temporaryHolder;
-                        temporaryHolder = frontier;
-                        frontier = temp;
+                        Stack<Node> buffer = tooDeepStack;
+                        tooDeepStack = frontier;
+                        frontier = buffer;
                         maxDepth += 2;
                     }
                     currentNode = frontier.Pop();
                 }
                 
                 visited.Add(currentNode);
-                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
+                player = otherPlayer(currentNode.lastPlayed);
                 foreach (int action in findActions(currentNode.board))
                 {
                     char[] childBoard = (char[])currentNode.board.Clone();
@@ -184,13 +140,13 @@ namespace TicTacToe
 
                     if (!visited.Contains(childNode) && !frontier.Contains(childNode))
                     {
-                        if (getWinner(childBoard) == startPlayer)
+                        if (getWinner(childBoard, false) == startPlayer)
                         {
-                            return getFirstMove(childNode);
+                            return getFirstAction(childNode);
                         }
-                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
+                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard, false) != otherPlayer(startPlayer))
                         {
-                            return getFirstMove(childNode);
+                            return getFirstAction(childNode);
                         }
                         else if (checkGameOver(childBoard))
                         {
@@ -213,12 +169,12 @@ namespace TicTacToe
             PriorityQueue<Node, int> frontier = new PriorityQueue<Node,int>();
             HashSet<Node> visited = new HashSet<Node>();
 
-            frontier.Enqueue(new Node(null, board, -1, (startPlayer == 'X') ? 'O' : 'X'), 0);
+            frontier.Enqueue(new Node(null, board, -1, otherPlayer(startPlayer)), 0);
             while (frontier.Count > 0)
             {
                 Node currentNode = frontier.Dequeue();
                 visited.Add(currentNode);
-                player = (currentNode.lastPlayed == 'X') ? 'O' : 'X';
+                player = otherPlayer(currentNode.lastPlayed);
                 foreach (int action in findActions(currentNode.board))
                 {
                     char[] childBoard = (char[])currentNode.board.Clone();
@@ -227,13 +183,13 @@ namespace TicTacToe
 
                     if (!visited.Contains(childNode) /*&& !frontier*/)
                     {
-                        if (getWinner(childBoard) == startPlayer)
+                        if (getWinner(childBoard, false) == startPlayer)
                         {
-                            return getFirstMove(childNode);
+                            return getFirstAction(childNode);
                         }
-                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard) != otherPlayer(startPlayer))
+                        else if (!canWin && checkGameOver(childBoard) && getWinner(childBoard, false) != otherPlayer(startPlayer))
                         {
-                            return getFirstMove(childNode);
+                            return getFirstAction(childNode);
                         }
                         else if (checkGameOver(childBoard))
                         {
@@ -257,7 +213,7 @@ namespace TicTacToe
 
             char[] lastBoard = node.parent.board;
             int lastMove = node.action;
-            char winner = getWinner(board);
+            char winner = getWinner(board, false);
             int score = 0;
             if (getNumberOfWinningMoves(lastBoard, otherPlayer(startPlayer)) > 0 && getNumberOfWinningMoves(board, otherPlayer(startPlayer))  == 0)
             {
@@ -336,7 +292,7 @@ namespace TicTacToe
             }
             return potentialWin;
         }
-        private static int getFirstMove(Node childNode)
+        private static int getFirstAction(Node childNode)
         {
             if (childNode.parent == null)
                 return -1;
@@ -367,9 +323,9 @@ namespace TicTacToe
             int score = 0;
             if (checkGameOver(board))
             {
-                if (getWinner(board) == maximizingPlayer)
+                if (getWinner(board, false) == maximizingPlayer)
                     score = 10;
-                else if (getWinner(board) == otherPlayer(maximizingPlayer))
+                else if (getWinner(board, false) == otherPlayer(maximizingPlayer))
                     score = -10;
             }
             else
@@ -420,12 +376,12 @@ namespace TicTacToe
             return actions[index];
         }
 
-        public static int randomMove(char[] board, char player)
+        public static int randomAction(char[] board, char player)
         {
-            int pos = rng.Next(Settings.boardSizeSq);
+            int pos = rng.Next(boardSizeSq);
             while (board[pos] != '\0')
             {
-                pos = rng.Next(Settings.boardSizeSq);
+                pos = rng.Next(boardSizeSq);
             }
             randomMovesTaken++;
             return pos;
