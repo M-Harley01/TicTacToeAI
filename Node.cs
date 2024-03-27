@@ -6,21 +6,11 @@ using System.Threading.Tasks;
 
 namespace TicTacToe
 {
-    public class Node
+    public class Node(Node? parent, char[] board, int action, char lastPlayed)
     {
-        public Node? parent;
-        public char[] board;
-        public int action;
-        public char lastPlayed;
-
-        public Node(Node? parent, char[] board, int action, char lastPlayed) 
-        {
-            this.parent = parent;
-            this.board = (char[])board.Clone();
-            this.action = action;
-            this.lastPlayed = lastPlayed;
-        }
-
-        
+        public Node? parent = parent;
+        public char[] board = (char[])board.Clone();
+        public int action = action;
+        public char lastPlayed = lastPlayed;
     }
 }

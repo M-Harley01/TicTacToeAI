@@ -8,7 +8,7 @@ namespace TicTacToe
 {
     public interface IScreen
     {
-        public void draw();
-        public void handleMouse();
+        public void Draw();
+        public void HandleMouse();
     }
 }

@@ -12,44 +12,44 @@ namespace TicTacToe
 {
     public class SettingsScreen : IScreen
     {
-        private static Button[] buttons = [
+        private static readonly Button[] buttons = [
             new Button(50, (SCREEN_HEIGHT / 8) * 7 , 300, SCREEN_HEIGHT / 8, "Back", () =>
             {
                 currentScreen = new MenuScreen();
             }),
             new Button(SCREEN_WIDTH - 150, 150, 100, 100, "+", () =>
             {
-                updateBoardSize(boardSizeLength + 1);
+                UpdateBoardSize(boardSize + 1);
             }),
             new Button(SCREEN_WIDTH - 450, 150, 100, 100, "-", () =>
             {
-                updateBoardSize(boardSizeLength - 1);
+                UpdateBoardSize(boardSize - 1);
             })
         ];
 
-        public void draw()
+        public void Draw()
         {
             Raylib.BeginDrawing();
             Raylib.ClearBackground(background);
             for (int i = 0; i < buttons.Length; i++)
             {
-                buttons[i].draw();
+                buttons[i].Draw();
             }
             Raylib.DrawText($"Board Size: ", 50, 160, 80, uiTextPrimary);
-            Raylib.DrawText($"{boardSizeLength}x{boardSizeLength}", SCREEN_WIDTH - 450 + 130, 160, 80, uiTextPrimary);
+            Raylib.DrawText($"{boardSize}x{boardSize}", SCREEN_WIDTH - 450 + 130, 160, 80, uiTextPrimary);
             Raylib.EndDrawing();
         }
 
-        public void handleMouse()
+        public void HandleMouse()
         {
             if (Raylib.IsMouseButtonPressed(MouseButton.Left))
             {
                 Vector2 mousePosition = Raylib.GetMousePosition();
                 for (int i = 0; i < buttons.Length; i++)
                 {
-                    if (mouseInRect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
+                    if (MouseInRect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
                     {
-                        buttons[i].onClick();
+                        buttons[i].OnClick();
                     }
                 }
             }

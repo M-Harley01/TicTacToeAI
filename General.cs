@@ -19,25 +19,26 @@ namespace TicTacToe
         public static char[] mainBoard = new char[boardSizeSq];
 
         public static char winner = '\0';
-        public static List<int> winningPlaces = new List<int>();
+        public static List<int> winningPlaces = [];
 
         public static bool gameOver = false;
         public static bool quit = false;
 
-        public static Stopwatch stopwatch = new Stopwatch();
+        public static Stopwatch stopwatch = new();
         public static long timeTakenForAction = 0;
 
-        public static Random rng = new Random();
+        public static Random rng = new();
 
         public static IScreen currentScreen = new MenuScreen();
 
-        public static char otherPlayer(char player) => player == 'X' ? 'O' : 'X';
+        public static char OtherPlayer(char player) => player == 'X' ? 'O' : 'X';
 
-        public static int flatten(int x, int y) => x + y * boardSizeLength;
+        //Turns 2d coordinates into an index in the array
+        public static int Flatten(int x, int y) => x + y * boardSize;
 
-        public static void nextTurn() => currentPlayer = otherPlayer(currentPlayer);
+        public static void NextTurn() => currentPlayer = OtherPlayer(currentPlayer);
 
-        public static void resetBoard(char[] board)
+        public static void ResetBoard(char[] board)
         {
             for (int i = 0; i < boardSizeSq; i++)
             {
@@ -45,12 +46,12 @@ namespace TicTacToe
             }
         }
 
-        public static bool checkGameOver(char[] board)
+        public static bool CheckGameOver(char[] board)
         {
             if(winner != '\0' || gameOver)
                 return true;        
 
-            if (getWinner(board, false) != '\0')
+            if (GetWinner(board, false) != '\0')
                 return true;
 
             for (int i = 0; i < boardSizeSq; i++)
@@ -62,9 +63,10 @@ namespace TicTacToe
             return true;
         }
 
-        public static List<int> findActions(char[] board)
+        //Find every location on the board that is empty
+        public static List<int> FindActions(char[] board)
         {
-            List<int> actions = new List<int>();
+            List<int> actions = [];
             for (int i = 0; i < boardSizeSq; i++)
             {
                 if (board[i] == '\0')
@@ -73,88 +75,91 @@ namespace TicTacToe
             return actions;
         }
 
-        public static void updateBoardSize(int newBoardSizeLength)
+        public static void UpdateBoardSize(int newBoardSize)
         {
-            if (newBoardSizeLength < 3 || newBoardSizeLength > 9)
+            if (newBoardSize < 3 || newBoardSize > 9)
                 return;
-            boardSizeLength = newBoardSizeLength;
-            boardSizeSq = boardSizeLength*boardSizeLength;
+            boardSize = newBoardSize;
+            boardSizeSq = boardSize*boardSize;
             mainBoard = new char[boardSizeSq];
         }
 
-        public static bool mouseInRect(int x, int y, int width, int height, Vector2 mouse) => !(mouse.X < x || mouse.X > width + x || mouse.Y < y || mouse.Y > y + height);
+        //Check if the mouse is inside the bounds of a rectangle.
+        public static bool MouseInRect(int x, int y, int width, int height, Vector2 mouse) => !(mouse.X < x || mouse.X > width + x || mouse.Y < y || mouse.Y > y + height);
 
-        //TODO: MAKE BETTER
-        public static char getWinner(char[] board, bool highlightWinner)
+        public static char GetWinner(char[] board, bool highlightWinner)
         {
             char checking = 'X';
             for (int i = 0; i < 2; i++)
             {
+                int inADiagonal1 = 0;
+                int inADiagonal2 = 0;
 
-                int foundDiagonal1 = 0;
-                int foundDiagonal2 = 0;
-
-                for (int x = 0; x < boardSizeLength; x++)
+                for (int x = 0; x < boardSize; x++)
                 {
-                    int foundDown = 0;
-                    int foundAcross = 0;
-                    for (int y = 0; y < boardSizeLength; y++)
+                    int inAColumn = 0;
+                    int inARow = 0;
+                    for (int y = 0; y < boardSize; y++)
                     {
-                        if (board[flatten(x, y)] == checking)
-                            foundDown++;
-                        if (board[flatten(y, x)] == checking)
-                            foundAcross++;
+                        if (board[Flatten(x, y)] == checking)
+                            inAColumn++;
+                        if (board[Flatten(y, x)] == checking)
+                            inARow++;
                     }
 
-                    if (foundDown == boardSizeLength)
-                    {
-                        if (!highlightWinner)
-                            return checking;
-
-                        for (int k = 0; k < boardSizeLength; k++)
-                        {
-                            winningPlaces.Add(flatten(x, k));
-                        }
-                        return checking;
-                    }
-                    if (foundAcross == boardSizeLength)
+                    //Check if has a full column filled
+                    if (inAColumn == boardSize)
                     {
                         if (!highlightWinner)
                             return checking;
 
-                        for (int k = 0; k < boardSizeLength; k++)
+                        for (int k = 0; k < boardSize; k++)
                         {
-                            winningPlaces.Add(flatten(k, x));
+                            winningPlaces.Add(Flatten(x, k));
+                        }
+                        return checking;
+                    }
+                    //Check if has a full row filled
+                    if (inARow == boardSize)
+                    {
+                        if (!highlightWinner)
+                            return checking;
+
+                        for (int k = 0; k < boardSize; k++)
+                        {
+                            winningPlaces.Add(Flatten(k, x));
                         }
                         return checking;
                     }
 
-                    if (board[flatten(x, x)] == checking)
-                        foundDiagonal1++;
-                    if (board[flatten((boardSizeLength - 1) - x, x)] == checking)
-                        foundDiagonal2++;
+                    if (board[Flatten(x, x)] == checking)
+                        inADiagonal1++;
+                    if (board[Flatten((boardSize - 1) - x, x)] == checking)
+                        inADiagonal2++;
                 }
 
-                if (foundDiagonal1 == boardSizeLength)
+                //Check if has a full diagonal filled
+                if (inADiagonal1 == boardSize)
                 {
                     if (!highlightWinner)
                         return checking;
 
-                    for (int k = 0; k < boardSizeLength; k++)
+                    for (int k = 0; k < boardSize; k++)
                     {
-                        winningPlaces.Add(flatten(k, k));
+                        winningPlaces.Add(Flatten(k, k));
                     }
                     return checking;
                 }
 
-                if (foundDiagonal2 == boardSizeLength)
+                //Check if has a full diagonal filled
+                if (inADiagonal2 == boardSize)
                 {
                     if (!highlightWinner)
                         return checking;
 
-                    for (int k = 0; k < boardSizeLength; k++)
+                    for (int k = 0; k < boardSize; k++)
                     {
-                        winningPlaces.Add(flatten((boardSizeLength - 1) - k, k));
+                        winningPlaces.Add(Flatten((boardSize - 1) - k, k));
                     }
                     return checking;
                 }

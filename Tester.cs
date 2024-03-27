@@ -14,12 +14,13 @@ namespace TicTacToe
             END,
         }
 
-        static int getHowManyToFill(Difficulty difficulty)
+        static int GetHowManyToFill(Difficulty difficulty)
         {
-            switch (difficulty) {
+            switch (difficulty)
+            {
                 case Difficulty.EMPTY:
                     return 0;
-                case Difficulty.HARD: 
+                case Difficulty.HARD:
                     return (2 * Settings.boardSizeSq) / 9;
                 case Difficulty.MEDIUM:
                     return (4 * Settings.boardSizeSq) / 9;
@@ -27,12 +28,15 @@ namespace TicTacToe
                     return (6 * Settings.boardSizeSq) / 9;
                 case Difficulty.END:
                     return (8 * Settings.boardSizeSq) / 9;
+                default:
+                    break;
             }
 
             return 8;
         }
 
-        static char[] randomBoard(int fill)
+        //Fills a board with random moves.
+        static char[] RandomBoard(int fill)
         {
             char[] board = new char[Settings.boardSizeSq];
 
@@ -49,23 +53,25 @@ namespace TicTacToe
                     x = rng.Next(Settings.boardSizeSq);
                 }
                 board[x] = currentTurn;
-                currentTurn = currentTurn == 'X' ? 'O' : 'X';
+                currentTurn = OtherPlayer(currentTurn);
             }
             return board;
         }
 
-        public static long testAlgorithm(Func<char[], char, int> algorithm, Difficulty difficulty)
+        //Records how long it takens an algorithm to take an action. 
+        public static long TestAlgorithm(Func<char[], char, int> algorithm, Difficulty difficulty)
         {
-            char[] board = randomBoard(getHowManyToFill(difficulty));
+            char[] board = RandomBoard(GetHowManyToFill(difficulty));
             Stopwatch stopwatch = Stopwatch.StartNew();
             algorithm.Invoke(board, 'X');
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds;
         }
 
-        public static bool compareAlgorithm(Func<char[], char, int> algorithm1, Func<char[], char, int> algorithm2, Difficulty difficulty)
+        //Compares the action taken by two algorithms
+        public static bool CompareAlgorithm(Func<char[], char, int> algorithm1, Func<char[], char, int> algorithm2, Difficulty difficulty)
         {
-            char[] board = randomBoard(getHowManyToFill(difficulty));
+            char[] board = RandomBoard(GetHowManyToFill(difficulty));
             return algorithm1.Invoke(board, 'X') == algorithm2.Invoke(board, 'X');
         }
 

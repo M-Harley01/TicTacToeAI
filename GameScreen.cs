@@ -21,9 +21,9 @@ namespace TicTacToe
         private const int TILE_GAP = 10;
 
         private static Tile[] tiles = new Tile[boardSizeSq];
-        private static DropDown dropDownMenu = new DropDown(TILES_END_X + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
+        private static readonly DropDown dropDownMenu = new(TILES_END_X + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 45, 300, 40, ["Breadth First", "Depth First", "I.D.D.F.S", "A*", "MiniMax search"]);
         
-        private static Button[] buttons = [
+        private static readonly Button[] buttons = [
             new Button(TILES_END_X + SCREEN_WIDTH / 8 - 150, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Reset", () =>
             {
                 mainBoard = new char[boardSizeSq];
@@ -34,8 +34,8 @@ namespace TicTacToe
             }),
             new Button(TILES_END_X + SCREEN_WIDTH / 8 - 150, TILES_END_Y-150, 300, SCREEN_HEIGHT / 8, "Swap", () =>
             {
-                aiPlayer = otherPlayer(aiPlayer);
-                manualPlayer = otherPlayer(manualPlayer);
+                aiPlayer = OtherPlayer(aiPlayer);
+                manualPlayer = OtherPlayer(manualPlayer);
             }),
             new Button(50, TILES_END_Y, 300, SCREEN_HEIGHT / 8, "Back", () =>
             {
@@ -46,39 +46,39 @@ namespace TicTacToe
 
         public GameScreen()
         {
-            generateTiles();
+            GenerateTiles();
             mainBoard = new char[boardSizeSq];
             gameOver = false;
             currentPlayer = manualPlayer;
         }
 
-        private static int tileSize() => ((SCREEN_HEIGHT / 4) * 3 - TILE_GAP * boardSizeLength) / boardSizeLength;
+        private static int TileSize() => ((SCREEN_HEIGHT / 4) * 3 - TILE_GAP * boardSize) / boardSize;
 
-        private static int centreX()
+        //Get the x position needed to centre the tiles.
+        private static int CentreX()
         {
-            int totalWidth = (TILE_GAP + tileSize()) * boardSizeLength - TILE_GAP;
+            int totalWidth = (TILE_GAP + TileSize()) * boardSize - TILE_GAP;
             int areaAvailable = TILES_END_X - TILES_START_X;
             return TILES_START_X + (areaAvailable - totalWidth) / 2;
         }
 
-        public static void generateTiles()
+        public static void GenerateTiles()
         {
+            //Generate the tiles for the user interface, based on the size of the grid (3x3,4x4,etc).
             tiles = new Tile[boardSizeSq];
-            for (int x = 0; x < boardSizeLength; x++)
+            for (int x = 0; x < boardSize; x++)
             {
-                for (int y = 0; y < boardSizeLength; y++)
+                for (int y = 0; y < boardSize; y++)
                 {
-                    tiles[flatten(x, y)] = new Tile(centreX() + (TILE_GAP + tileSize()) * y, TILES_START_Y + TILE_GAP / 2 + (TILE_GAP + tileSize()) * x, tileSize(), tileSize(), flatten(x, y));
+                    tiles[Flatten(x, y)] = new Tile(CentreX() + (TILE_GAP + TileSize()) * y, TILES_START_Y + TILE_GAP / 2 + (TILE_GAP + TileSize()) * x, TileSize(), TileSize(), Flatten(x, y));
                 }
             }
         }
-        public void draw()
+        public void Draw()
         {
             Raylib.BeginDrawing();
 
             Raylib.ClearBackground(background);
-
-            dropDownMenu.draw();
 
             Raylib.DrawText("Select an algorithm", TILES_END_X + SCREEN_WIDTH / 8 - 150, TILES_START_Y + 15, 30, Color.White);
             Raylib.DrawText("Using: " + searchAlgorithm.Method.Name, 0, 0, 60, Color.White);
@@ -88,27 +88,30 @@ namespace TicTacToe
 
             for (int i = 0; i < boardSizeSq; i++)
             {
-                tiles[i].Draw(tileSize());
+                tiles[i].Draw(TileSize());
+            }
+
+            dropDownMenu.Draw();
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                buttons[i].Draw();
             }
 
             if (gameOver)
             {
                 Raylib.DrawText("Game over", 0, 150, 30, Color.White);
                 string winnerText = "Draw";
-                if(winner!='\0')
+                if (winner != '\0')
                 {
                     winnerText = $"Winner: {winner}";
                 }
-                Raylib.DrawText(winnerText, (SCREEN_WIDTH - Raylib.MeasureText(winnerText,100))/2, SCREEN_HEIGHT - 100, 100, uiPrimary);
-            }
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                buttons[i].draw();
+                Raylib.DrawText(winnerText, (SCREEN_WIDTH - Raylib.MeasureText(winnerText, 100)) / 2, SCREEN_HEIGHT - 100, 100, uiPrimary);
             }
             Raylib.EndDrawing();
         }
 
-        public void handleMouse()
+        public void HandleMouse()
         {
             if (Raylib.IsMouseButtonPressed(MouseButton.Left))
             {
@@ -116,23 +119,23 @@ namespace TicTacToe
 
                 foreach (Tile tile in tiles)
                 {
-                    if (mouseInRect(tile.x, tile.y, tile.width, tile.height, mousePosition))
+                    if (MouseInRect(tile.x, tile.y, tile.width, tile.height, mousePosition))
                     {
-                        tile.onClick();
+                        tile.OnClick();
                     }
                 }
 
                 for (int i = 0; i < buttons.Length; i++)
                 {
-                    if (mouseInRect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
+                    if (MouseInRect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
                     {
-                        buttons[i].onClick();
+                        buttons[i].OnClick();
                     }
                 }
 
-                if (mouseInRect(dropDownMenu.x, dropDownMenu.y, dropDownMenu.width, dropDownMenu.getHeight(), mousePosition))
+                if (MouseInRect(dropDownMenu.x, dropDownMenu.y, dropDownMenu.width, dropDownMenu.GetHeight(), mousePosition))
                 {
-                    dropDownMenu.onClick(mousePosition);
+                    dropDownMenu.OnClick(mousePosition);
                 }
             }
         }

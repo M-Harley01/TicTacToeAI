@@ -12,7 +12,7 @@ namespace TicTacToe
 {
     internal class MenuScreen : IScreen
     {
-        private static Button[] buttons = [
+        private static readonly Button[] buttons = [
             new Button(SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT / 2 - 50, 300, 100, "Start", () =>
             {
                 currentScreen = new GameScreen();
@@ -28,28 +28,28 @@ namespace TicTacToe
         ];
 
 
-        public void draw()
+        public void Draw()
         {
             Raylib.BeginDrawing();
             Raylib.ClearBackground(background);
             Raylib.DrawText("Tic Tac Toe AI", (SCREEN_WIDTH - Raylib.MeasureText("Tic Tac Toe AI", 100))/2, SCREEN_HEIGHT / 8, 100, uiTextPrimary);
             for(int i = 0; i < buttons.Length; i++)
             {
-                buttons[i].draw();
+                buttons[i].Draw();
             }
             Raylib.EndDrawing();
         }
 
-        public void handleMouse()
+        public void HandleMouse()
         {
             if (Raylib.IsMouseButtonPressed(MouseButton.Left))
             {
                 Vector2 mousePosition = Raylib.GetMousePosition();
                 for (int i = 0; i < buttons.Length; i++)
                 {
-                    if (mouseInRect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
+                    if (MouseInRect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height, mousePosition))
                     {
-                        buttons[i].onClick();
+                        buttons[i].OnClick();
                     }
                 }
             }

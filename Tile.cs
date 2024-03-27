@@ -11,18 +11,18 @@ namespace TicTacToe
         public int height = height;
         public int index = index;
 
-        public void onClick()
+        public void OnClick()
         {
             if (mainBoard[index] != '\0' || gameOver)
                 return;
 
             mainBoard[index] = currentPlayer;
-            gameOver = checkGameOver(mainBoard);
+            gameOver = CheckGameOver(mainBoard);
 
             if(gameOver)
-                winner = getWinner(mainBoard, true);
+                winner = GetWinner(mainBoard, true);
 
-            nextTurn();
+            NextTurn();
         }
 
         public void Draw(int size)
